@@ -64,7 +64,8 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
         }
-        void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
+
+        public void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
         {
             IPurchaseOrderQuery PurchaseOrderQueryRq = requestMsgSet.AppendPurchaseOrderQueryRq();
             //Set attributes
@@ -208,10 +209,7 @@ namespace SubscribeAndHandleQBEvent
             PurchaseOrderQueryRq.OwnerIDList.Add(Guid.NewGuid().ToString());
         }
 
-
-
-
-        void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
+        public void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
         {
             if (responseMsgSet == null) return;
             IResponseList responseList = responseMsgSet.ResponseList;
@@ -230,7 +228,8 @@ namespace SubscribeAndHandleQBEvent
                         ENResponseType responseType = (ENResponseType)response.Type.GetValue();
                         if (responseType == ENResponseType.rtPurchaseOrderQueryRs)
                         {
-                            //upcast to more specific type here, this is safe because we checked with response.Type check above
+                            // upcast to more specific type here, this is safe because we checked with response.
+                            // Type check above
                             IPurchaseOrderRetList PurchaseOrderRet = (IPurchaseOrderRetList)response.Detail;
                             WalkPurchaseOrderRet(PurchaseOrderRet);
                         }
@@ -239,10 +238,7 @@ namespace SubscribeAndHandleQBEvent
             }
         }
 
-
-
-
-        void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
+        public void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
         {
             if (PurchaseOrderRet == null) return;
             //Go through all the elements of IPurchaseOrderRetList
@@ -1084,9 +1080,5 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
         }
-
-
-
-
     }
 }

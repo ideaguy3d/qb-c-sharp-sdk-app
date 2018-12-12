@@ -115,6 +115,7 @@ namespace SubscribeAndHandleQBEvent
         static extern int CoInitializeEx(IntPtr pvReserved, uint dwCoInit);
 
         // CoUninitialize() is used to uninitialize a COM thread.
+        // I do not know what a COM thread is
         [DllImport("ole32.dll")]
         static extern void CoUninitialize();
 
@@ -123,8 +124,7 @@ namespace SubscribeAndHandleQBEvent
         // We will need this API to post a WM_QUIT message to the main 
         // thread in order to terminate this application.
         [DllImport("user32.dll")]
-        static extern bool PostThreadMessage(uint idThread, uint Msg, UIntPtr wParam,
-            IntPtr lParam);
+        static extern bool PostThreadMessage(uint idThread, uint Msg, UIntPtr wParam, IntPtr lParam);
 
         // GetCurrentThreadId() allows us to obtain the thread id of the
         // calling thread. This allows us to post the WM_QUIT message to
@@ -136,8 +136,7 @@ namespace SubscribeAndHandleQBEvent
         // of this application. Hence we will need to import GetMessage(), 
         // TranslateMessage() and DispatchMessage().
         [DllImport("user32.dll")]
-        static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin,
-            uint wMsgFilterMax);
+        static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
 
         [DllImport("user32.dll")]
         static extern bool TranslateMessage([In] ref MSG lpMsg);
@@ -152,7 +151,7 @@ namespace SubscribeAndHandleQBEvent
         protected static uint m_uiMainThreadId;  // Stores the main thread's thread id.
         protected static int m_iObjsInUse;  // Keeps a count on the total number of objects alive.
         protected static int m_iServerLocks;// Keeps a lock count on this application.
-
+        
         // This property returns the main thread's id.
         public static uint MainThreadId
         {
@@ -382,13 +381,15 @@ namespace SubscribeAndHandleQBEvent
             return bRet;
         }
 
+        // These are the options shown in the CLI when this program is invoked 
+        // with the -h flag
         private static void DisplayUsage()
         {
             string strUsage = "Usage";
             strUsage += "\n -regserver \n\t:register as COM out of proc server";
             strUsage += "\n -unregserver \n\t: unregister COM out of proc server. Also unsubscribes from all the events.";
             strUsage += "\n -d		\n\t: subscribe for customer add/modify/delete data event";
-            strUsage += "\n -u <Menu Name>   \n\t: subscribe for UI extnesion event. <Menu Name> will appear under customers menu in QB";
+            strUsage += "\n -u <Menu Name>   \n\t: subscribe for UI extension event. <Menu Name> will appear under customers menu in QB";
             strUsage += "\n -dd 		\n\t: unsubscribe for customer data event";
             strUsage += "\n -ud 		\n\t: unsubscribe for UI extension event";
             strUsage += "\n";
@@ -396,15 +397,14 @@ namespace SubscribeAndHandleQBEvent
             Console.Write(strUsage);
         }
 
-        /** ~ Julius ~
-         ******************************* 
-         * The more important classes !
-         ******************************* 
+        /**             ~ Julius ~
+         ****************************************** 
+          **** The more important functions!! ****
+         ****************************************** 
          */
 
-        //Subscribes this application to listen for Data event or UI extension event
-        private static void SubscribeForEvents(QBSubscriptionType strType, string strData)
-        {
+        // Subscribes this application to listen for Data event or UI extension event
+        private static void SubscribeForEvents(QBSubscriptionType strType, string strData) {
             RequestProcessor2Class qbRequestProcessor;
 
             try
@@ -458,9 +458,9 @@ namespace SubscribeAndHandleQBEvent
                 qbRequestProcessor = null;
                 return;
             }
-        }
+        } // END OF: SubscribeForEvents
 
-        //Unsubscribes this application from listening to add/modify/delete custmor event
+        // Unsubscribes this application from listening to add/modify/delete custmor event
         private static void UnsubscribeForEvents(QBSubscriptionType strType, bool bSilent)
         {
             RequestProcessor2Class qbRequestProcessor;
@@ -499,7 +499,7 @@ namespace SubscribeAndHandleQBEvent
                 return;
             }
             return;
-        }
+        } // END OF: UnsubscribeForEvents 
 
         // This Method returns the qbXML for Subscribing this application to QB for listening 
         // to customer add/modify/delete event.
@@ -516,38 +516,36 @@ namespace SubscribeAndHandleQBEvent
             XmlElement qbXMLMsgsRq = requestXMLDoc.CreateElement("QBXMLSubscriptionMsgsRq");
             qbXML.AppendChild(qbXMLMsgsRq);
 
-            //Data Event Subscription ADD request
+            // Data Event Subscription ADD request
             XmlElement dataEventSubscriptionAddRq = requestXMLDoc.CreateElement("DataEventSubscriptionAddRq");
             qbXMLMsgsRq.AppendChild(dataEventSubscriptionAddRq);
 
-
-            //Data Event Subscription ADD
+            // Data Event Subscription ADD
             XmlElement dataEventSubscriptionAdd = requestXMLDoc.CreateElement("DataEventSubscriptionAdd");
             dataEventSubscriptionAddRq.AppendChild(dataEventSubscriptionAdd);
 
-            //Add Subscription ID
+            // Add Subscription ID
             dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText = "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
 
-            //Add COM CallbackInfo
+            // Add COM CallbackInfo
             XmlElement comCallbackInfo = requestXMLDoc.CreateElement("COMCallbackInfo");
             dataEventSubscriptionAdd.AppendChild(comCallbackInfo);
 
-            //Appname and CLSID
+            // Appname and CLSID
             comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("AppName")).InnerText = strAppName;
             comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("CLSID")).InnerText = "{62447F81-C195-446f-8201-94F0614E49D5}";
 
-            //Delivery Policy
+            // Delivery Policy
             dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("DeliveryPolicy")).InnerText = "DeliverAlways";
 
-            //track lost events
+            // track lost events
             dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("TrackLostEvents")).InnerText = "All";
 
-
-            //  ListEventSubscription
+            // ListEventSubscription
             XmlElement listEventSubscription = requestXMLDoc.CreateElement("ListEventSubscription");
             dataEventSubscriptionAdd.AppendChild(listEventSubscription);
 
-            //Add Customer List and operations
+            // Add Customer List and operations
             listEventSubscription.AppendChild(requestXMLDoc.CreateElement("ListEventType")).InnerText = "Customer";
             listEventSubscription.AppendChild(requestXMLDoc.CreateElement("ListEventOperation")).InnerText = "Add";
             listEventSubscription.AppendChild(requestXMLDoc.CreateElement("ListEventOperation")).InnerText = "Modify";
@@ -557,7 +555,7 @@ namespace SubscribeAndHandleQBEvent
             LogXmlData(@"C:\Temp\DataEvent.xml", strRetString);
             return strRetString;
 
-        }
+        } // END OF: GetDataEventSubscriptionAddXML(){}
 
         // This Method return the qbXML for the Adding a UI extension to the customer menu.
         // Event will be received any time the menu is clicked 
@@ -654,7 +652,7 @@ namespace SubscribeAndHandleQBEvent
             LogXmlData(@"C:\Temp\Unsubscribe.xml", strRetString);
             return strRetString;
 
-        }
+        } // GetSubscriptionDeleteXML(){}
 
         // Used only for debug purpose
         // strFile Name should have complete Path of the file too
@@ -666,15 +664,18 @@ namespace SubscribeAndHandleQBEvent
             sw.Close();
         }
 
+        /** code I added **/
         private static string JuliusPurchaseOrderQueryOne()
         {
-            QBSessionManager sessionManager = null; 
+            QBSessionManager qbSessionManager = null; 
 
             return "julius";
         }
 
         /// <summary>
-        /// The main entry point for the application.
+        /// *****************************************************
+        ///  **** The MAIN ENTRY POINT for the Application. ****
+        /// *****************************************************
         /// </summary>
         [STAThread]
         static void Main(string[] args)
@@ -690,7 +691,7 @@ namespace SubscribeAndHandleQBEvent
                 m_iObjsInUse = 0;
                 m_iServerLocks = 0;
                 m_uiMainThreadId = GetCurrentThreadId();
-
+                
                 // Register the EventHandlerObjClassFactory.
                 EventHandlerObjClassFactory factory = new EventHandlerObjClassFactory();
                 factory.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
@@ -698,7 +699,7 @@ namespace SubscribeAndHandleQBEvent
                 factory.Flags = (uint)REGCLS.REGCLS_MULTIPLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
                 factory.RegisterClassObject();
                 ClassFactoryBase.ResumeClassObjects();
-
+                
                 Console.WriteLine("Waiting for QB Customer Add Event .....\n");
 
                 // Start the message loop.

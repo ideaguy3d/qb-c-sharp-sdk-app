@@ -64,6 +64,7 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
         }
+
         void BuildInvoiceQueryRq(IMsgSetRequest requestMsgSet)
         {
             IInvoiceQuery InvoiceQueryRq = requestMsgSet.AppendInvoiceQueryRq();
@@ -210,9 +211,6 @@ namespace SubscribeAndHandleQBEvent
             InvoiceQueryRq.OwnerIDList.Add(Guid.NewGuid().ToString());
         }
 
-
-
-
         void WalkInvoiceQueryRs(IMsgSetResponse responseMsgSet)
         {
             if (responseMsgSet == null) return;
@@ -240,9 +238,6 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
         }
-
-
-
 
         void WalkInvoiceRet(IInvoiceRetList InvoiceRet)
         {
@@ -1154,9 +1149,5 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
         }
-
-
-
-
     }
 }
