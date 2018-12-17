@@ -1,0 +1,10 @@
+**/settings.yml
+build/*
+config/settings.yml
+app.yaml
+.idea
+**/vendor
+auto-php/pmod-data
+vars.php
+.vs
+
