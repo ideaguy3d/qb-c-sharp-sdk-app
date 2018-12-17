@@ -21,6 +21,8 @@ namespace SubscribeAndHandleQBEvent
         {
             bool sessionBegun = false;
             bool connectionOpen = false;
+            //js - QBSessionManager is the RequestProcessor for QBFC
+            // this class will open connection, begin session, and manage requests and responses
             QBSessionManager sessionManager = null;
 
             try

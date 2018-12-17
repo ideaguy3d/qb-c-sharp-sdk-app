@@ -24,6 +24,7 @@ namespace SubscribeAndHandleQBEvent
         COINIT_SPEED_OVER_MEMORY = 0x8
     }
 
+    // class context 
     [Flags]
     enum CLSCTX : uint
     {
@@ -107,7 +108,7 @@ namespace SubscribeAndHandleQBEvent
     class SubscribeAndHandleQBEvent
     {
         enum QBSubscriptionType { Data, UI, UIExtension };
-        static string strAppName = "QB C# Event Sample";
+        static string strAppName = "Redstone Print and Mail";
 
         // CoInitializeEx() can be used to set the apartment model
         // of individual threads.
@@ -189,7 +190,7 @@ namespace SubscribeAndHandleQBEvent
             }
         }
 
-        // This method performs a thread-safe incrementation the 
+        // This method performs a thread-safe incrementation of the 
         // server lock count.
         public static int InterlockedIncrementServerLockCount()
         {
@@ -396,8 +397,8 @@ namespace SubscribeAndHandleQBEvent
 
             Console.Write(strUsage);
         }
-
-        /**             ~ Julius ~
+   
+        /**          ---- Julius ----
          ****************************************** 
           **** The more important functions!! ****
          ****************************************** 
@@ -405,6 +406,11 @@ namespace SubscribeAndHandleQBEvent
 
         // Subscribes this application to listen for Data event or UI extension event
         private static void SubscribeForEvents(QBSubscriptionType strType, string strData) {
+            
+            //js - The most critical Class, RequestProcessor2Class, this class enables me to
+            // 1 - open connection
+            // 2 - begin a session and specify file access preferences and authorization options
+            // 3 - Send qbXML requests and Get qbXML responses 
             RequestProcessor2Class qbRequestProcessor;
 
             try
@@ -505,14 +511,14 @@ namespace SubscribeAndHandleQBEvent
         // to customer add/modify/delete event.
         private static string GetDataEventSubscriptionAddXML()
         {
-            //Create the qbXML request
+            // Create the qbXML request
             XmlDocument requestXMLDoc = new XmlDocument();
             requestXMLDoc.AppendChild(requestXMLDoc.CreateXmlDeclaration("1.0", null, null));
             requestXMLDoc.AppendChild(requestXMLDoc.CreateProcessingInstruction("qbxml", "version=\"5.0\""));
             XmlElement qbXML = requestXMLDoc.CreateElement("QBXML");
             requestXMLDoc.AppendChild(qbXML);
 
-            //subscription Message request
+            // Subscription Message request
             XmlElement qbXMLMsgsRq = requestXMLDoc.CreateElement("QBXMLSubscriptionMsgsRq");
             qbXML.AppendChild(qbXMLMsgsRq);
 
@@ -557,38 +563,38 @@ namespace SubscribeAndHandleQBEvent
 
         } // END OF: GetDataEventSubscriptionAddXML(){}
 
-        // This Method return the qbXML for the Adding a UI extension to the customer menu.
+        // This Method returns the qbXML for the Adding a UI extension to the customer menu.
         // Event will be received any time the menu is clicked 
         private static string GetUIExtensionSubscriptionAddXML(string strMenuName)
         {
-            //Create the qbXML request
+            // Create the qbXML request
             XmlDocument requestXMLDoc = new XmlDocument();
             requestXMLDoc.AppendChild(requestXMLDoc.CreateXmlDeclaration("1.0", null, null));
             requestXMLDoc.AppendChild(requestXMLDoc.CreateProcessingInstruction("qbxml", "version=\"5.0\""));
             XmlElement qbXML = requestXMLDoc.CreateElement("QBXML");
             requestXMLDoc.AppendChild(qbXML);
 
-            //subscription Message request
+            // Subscription Message request
             XmlElement qbXMLMsgsRq = requestXMLDoc.CreateElement("QBXMLSubscriptionMsgsRq");
             qbXML.AppendChild(qbXMLMsgsRq);
 
-            //UI Extension Subscription ADD request
+            // UI Extension Subscription ADD request
             XmlElement uiExtSubscriptionAddRq = requestXMLDoc.CreateElement("UIExtensionSubscriptionAddRq");
             qbXMLMsgsRq.AppendChild(uiExtSubscriptionAddRq);
 
 
-            //UI Extension Subscription ADD
+            // UI Extension Subscription ADD
             XmlElement uiExtEventSubscriptionAdd = requestXMLDoc.CreateElement("UIExtensionSubscriptionAdd");
             uiExtSubscriptionAddRq.AppendChild(uiExtEventSubscriptionAdd);
 
-            //Add Subscription ID
+            // Add Subscription ID
             uiExtEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText = "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
 
-            //Add COM CallbackInfo
+            // Add COM CallbackInfo
             XmlElement comCallbackInfo = requestXMLDoc.CreateElement("COMCallbackInfo");
             uiExtEventSubscriptionAdd.AppendChild(comCallbackInfo);
 
-            //Appname and CLSID
+            // Appname and CLSID
             comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("AppName")).InnerText = strAppName;
             comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("CLSID")).InnerText = "{62447F81-C195-446f-8201-94F0614E49D5}";
 
@@ -622,7 +628,7 @@ namespace SubscribeAndHandleQBEvent
 
         }
 
-        // This Method return the qbXML for deleting the event subscription for this application
+        // This Method returns the qbXML for deleting the event subscription for this application
         // from QB
         private static string GetSubscriptionDeleteXML(QBSubscriptionType subscriptionType)
         {
@@ -664,7 +670,9 @@ namespace SubscribeAndHandleQBEvent
             sw.Close();
         }
 
-        /** code I added **/
+        /******************************/
+        /******** Code I Added ********/
+        /******************************/
         private static string JuliusPurchaseOrderQueryOne()
         {
             QBSessionManager qbSessionManager = null; 
