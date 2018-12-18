@@ -1,0 +1,9 @@
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\bin\Debug\MCInvoiceAddQBFC.exe
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\bin\Debug\MCInvoiceAddQBFC.pdb
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\obj\Debug\MCInvoiceAddQBFC.csprojAssemblyReference.cache
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\obj\Debug\MCInvoiceAddQBFC.Form1.resources
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\obj\Debug\IntuitQBFC.Properties.Resources.resources
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\obj\Debug\MCInvoiceAddQBFC.csproj.GenerateResource.cache
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\obj\Debug\MCInvoiceAddQBFC.csproj.CoreCompileInputs.cache
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\obj\Debug\MCInvoiceAddQBFC.exe
+C:\Users\julius\Desktop\MCInvoiceAddQBFC\Intuit_QBFC\obj\Debug\MCInvoiceAddQBFC.pdb
