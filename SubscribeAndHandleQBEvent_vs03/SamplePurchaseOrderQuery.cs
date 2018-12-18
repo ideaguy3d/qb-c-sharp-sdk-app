@@ -22,7 +22,7 @@ namespace SubscribeAndHandleQBEvent
             bool sessionBegun = false;
             bool connectionOpen = false;
             //js - QBSessionManager is the RequestProcessor for QBFC
-            // this class will open connection, begin session, and manage requests and responses
+            //-- this class will open connection, begin session, and manage requests and responses
             QBSessionManager sessionManager = null;
 
             try
@@ -37,6 +37,8 @@ namespace SubscribeAndHandleQBEvent
                 BuildPurchaseOrderQueryRq(requestMsgSet);
 
                 //Connect to QuickBooks and begin a session
+                //js - sessionManager won't return a sessionTicket because this is handled internally by QBFC13
+                //-- when using QBXMLRP2 .openConnection() will return a sessionTicket 
                 sessionManager.OpenConnection("", "Redstone Print and Mail");
                 connectionOpen = true;
                 sessionManager.BeginSession("", ENOpenMode.omDontCare);
