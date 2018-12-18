@@ -1,0 +1,11 @@
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\bin\Debug\netcoreapp2.1\JuliusApp1.deps.json
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\bin\Debug\netcoreapp2.1\JuliusApp1.runtimeconfig.json
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\bin\Debug\netcoreapp2.1\JuliusApp1.runtimeconfig.dev.json
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\bin\Debug\netcoreapp2.1\JuliusApp1.dll
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\bin\Debug\netcoreapp2.1\JuliusApp1.pdb
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\obj\Debug\netcoreapp2.1\JuliusApp1.csprojAssemblyReference.cache
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\obj\Debug\netcoreapp2.1\JuliusApp1.csproj.CoreCompileInputs.cache
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\obj\Debug\netcoreapp2.1\JuliusApp1.AssemblyInfoInputs.cache
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\obj\Debug\netcoreapp2.1\JuliusApp1.AssemblyInfo.cs
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\obj\Debug\netcoreapp2.1\JuliusApp1.dll
+C:\Users\julius\Desktop\QuickBooks_SDK\JuliusApp1\JuliusApp1\obj\Debug\netcoreapp2.1\JuliusApp1.pdb
