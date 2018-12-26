@@ -17,6 +17,7 @@ namespace SubscribeAndHandleQBEvent
 {
     public class PurchaseOrderQuerySample
     {
+        // 1 / 4 function 
         public void DoPurchaseOrderQuery()
         {
             bool sessionBegun = false;
@@ -30,15 +31,16 @@ namespace SubscribeAndHandleQBEvent
                 //Create the session Manager object
                 sessionManager = new QBSessionManager();
 
-                //Create the message set request object to hold our request
+                //Create the "message set" request object to hold our request
                 IMsgSetRequest requestMsgSet = sessionManager.CreateMsgSetRequest("US", 13, 0);
                 requestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-
+                
+                // Hoist a class function
                 BuildPurchaseOrderQueryRq(requestMsgSet);
 
                 //Connect to QuickBooks and begin a session
-                //js - sessionManager won't return a sessionTicket because this is handled internally by QBFC13
-                //-- when using QBXMLRP2 .openConnection() will return a sessionTicket 
+                //js - sessionManager won't return a sessionTicket because this is handled internally  
+                //-- by QBFC13 when using QBXMLRP2 .openConnection() will return a sessionTicket 
                 sessionManager.OpenConnection("", "Redstone Print and Mail");
                 connectionOpen = true;
                 sessionManager.BeginSession("", ENOpenMode.omDontCare);
@@ -69,14 +71,15 @@ namespace SubscribeAndHandleQBEvent
             }
         }
 
-        public void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
+        // 2 / 4 function, gets invoked in DoPurchaseOrderQuery()
+        private void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
         {
             IPurchaseOrderQuery PurchaseOrderQueryRq = requestMsgSet.AppendPurchaseOrderQueryRq();
-            //Set attributes
+            //js - Set attributes
             //Set field value for metaData
-            PurchaseOrderQueryRq.metaData.SetValue("IQBENmetaDataType");
+            PurchaseOrderQueryRq.metaData.SetValue(ENmetaData.mdMetaDataAndResponseData);
             //Set field value for iterator
-            PurchaseOrderQueryRq.iterator.SetValue("IQBENiteratorType");
+            PurchaseOrderQueryRq.iterator.SetValue(ENiterator.itContinue);
             //Set field value for iteratorID
             PurchaseOrderQueryRq.iteratorID.SetValue("IQBUUIDType");
             string ORTxnQueryElementType18203 = "TxnIDList";
@@ -213,10 +216,10 @@ namespace SubscribeAndHandleQBEvent
             PurchaseOrderQueryRq.OwnerIDList.Add(Guid.NewGuid().ToString());
         }
 
-        public void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
+        // 3 / 4 function
+        private void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
         {
-            if (responseMsgSet == null) return;
-            IResponseList responseList = responseMsgSet.ResponseList;
+            IResponseList responseList = responseMsgSet?.ResponseList;
             if (responseList == null) return;
             //if we sent only one request, there is only one response, we'll walk the list for this sample
             for (int i = 0; i < responseList.Count; i++)
@@ -242,7 +245,8 @@ namespace SubscribeAndHandleQBEvent
             }
         }
 
-        public void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
+        // 4 / 4 function, MAIN FUNCTION... I think. 
+        private void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
         {
             if (PurchaseOrderRet == null) return;
             //Go through all the elements of IPurchaseOrderRetList

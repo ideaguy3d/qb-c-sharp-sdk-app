@@ -14,3 +14,12 @@ vids
 _elevate-recoveries/vids/php-sql.mp4
 *.xlsx
 .vs
+*.config
+*.csproj
+*.sln
+obj
+bin
+debug
+*.user
+SubscribeAndHandleQBEvent_vs03/SubscribeAndHandleQBEvent.sln.DotSettings.user
+SubscribeAndHandleQBEvent_vs03/SubscribeAndHandleQBEvent.csproj

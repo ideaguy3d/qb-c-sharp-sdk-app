@@ -58,25 +58,28 @@ namespace SubscribeAndHandleQBEvent
             catch (Exception e)
             {
                 MessageBox.Show(e.Message, "Error");
+
                 if (sessionBegun)
                 {
                     sessionManager.EndSession();
                 }
+
                 if (connectionOpen)
                 {
                     sessionManager.CloseConnection();
-                }
+                } 
             }
         }
 
         public void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
         {
             IPurchaseOrderQuery PurchaseOrderQueryRq = requestMsgSet.AppendPurchaseOrderQueryRq();
-            //Set attributes
+            //js - changed to an enum, Set attributes
             //Set field value for metaData
-            PurchaseOrderQueryRq.metaData.SetValue("IQBENmetaDataType");
-            //Set field value for iterator
-            PurchaseOrderQueryRq.iterator.SetValue("IQBENiteratorType");
+            PurchaseOrderQueryRq.metaData.SetValue(ENmetaData.mdNoMetaData);
+            //js - changed to an enum
+            //Set field value for iterator, "IQBENiteratorType"
+            PurchaseOrderQueryRq.iterator.SetValue(ENiterator.itContinue);
             //Set field value for iteratorID
             PurchaseOrderQueryRq.iteratorID.SetValue("IQBUUIDType");
             string ORTxnQueryElementType18203 = "TxnIDList";

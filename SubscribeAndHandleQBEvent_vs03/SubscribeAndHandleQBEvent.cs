@@ -408,11 +408,13 @@ namespace SubscribeAndHandleQBEvent
         private static void SubscribeForEvents(QBSubscriptionType strType, string strData) {
             
             //js - The most critical Class, RequestProcessor2Class, this class enables me to
-            //-- 1 - open connection
-            //-- 2 - begin a session and specify file access preferences and authorization options
-            //-- 3 - Send qbXML requests and Get qbXML responses 
+            //-- 1) open connection
+            //-- 2) begin a session and specify file access preferences and authorization options
+            //-- 3) Send qbXML requests and Get qbXML responses 
             RequestProcessor2Class qbRequestProcessor;
-
+            
+            sessionMan
+            
             try
             {
                 // Get an instance of the qbXMLRP Request Processor and
@@ -464,6 +466,23 @@ namespace SubscribeAndHandleQBEvent
                 qbRequestProcessor = null;
                 return;
             }
+            
+            /*********************************************/
+            /**************** CUSTOM CODE ****************/
+            /*********************************************/
+            
+            //js -  Now try to to do a purchase order Query 
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLing("JHA - Error while trying to do a purchase order query - " + ex.Message);
+                qbRequestProcessor = null;
+                return;
+            }
+            
         } // END OF: SubscribeForEvents
 
         // Unsubscribes this application from listening to add/modify/delete custmor event
@@ -715,6 +734,7 @@ namespace SubscribeAndHandleQBEvent
                 IntPtr null_hwnd = new IntPtr(0);
                 while (GetMessage(out msg, null_hwnd, 0, 0) != false)
                 {
+                    Console.WriteLine("JHA - Invoke Custom Redstone Print and Mail functionality.");
                     TranslateMessage(ref msg);
                     DispatchMessage(ref msg);
                 }
