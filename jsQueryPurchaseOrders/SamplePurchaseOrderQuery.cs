@@ -22,6 +22,7 @@ namespace SubscribeAndHandleQBEvent
         {
             bool sessionBegun = false;
             bool connectionOpen = false;
+            
             //js - QBSessionManager is the RequestProcessor for QBFC
             //-- this class will open connection, begin session, and manage requests and responses
             QBSessionManager sessionManager = null;
@@ -82,25 +83,30 @@ namespace SubscribeAndHandleQBEvent
             PurchaseOrderQueryRq.iterator.SetValue(ENiterator.itContinue);
             //Set field value for iteratorID
             PurchaseOrderQueryRq.iteratorID.SetValue("IQBUUIDType");
+            
             string ORTxnQueryElementType18203 = "TxnIDList";
+            
             if (ORTxnQueryElementType18203 == "TxnIDList")
             {
                 //Set field value for TxnIDList
                 //May create more than one of these if needed
                 PurchaseOrderQueryRq.ORTxnQuery.TxnIDList.Add("200000-1011023419");
             }
+            
             if (ORTxnQueryElementType18203 == "RefNumberList")
             {
                 //Set field value for RefNumberList
                 //May create more than one of these if needed
                 PurchaseOrderQueryRq.ORTxnQuery.RefNumberList.Add("ab");
             }
+            
             if (ORTxnQueryElementType18203 == "RefNumberCaseSensitiveList")
             {
                 //Set field value for RefNumberCaseSensitiveList
                 //May create more than one of these if needed
                 PurchaseOrderQueryRq.ORTxnQuery.RefNumberCaseSensitiveList.Add("ab");
             }
+     
             if (ORTxnQueryElementType18203 == "TxnFilter")
             {
                 //Set field value for MaxReturned
@@ -1090,5 +1096,6 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
         }
-    }
+        
+    } // END OF: class PurchaseOrderQuerySample {}
 }

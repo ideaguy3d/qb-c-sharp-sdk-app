@@ -1,13 +1,14 @@
 using System;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Xml;
+using System.IO;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
 using System.Text;
 using System.Threading;
-using Interop.QBXMLRP2;
+using System.Windows.Forms;
+using System.Xml;
 using Interop.QBFC13;
+using Interop.QBXMLRP2;
+using Microsoft.Win32;
 
 namespace SubscribeAndHandleQBEvent
 {
@@ -434,6 +435,9 @@ namespace SubscribeAndHandleQBEvent
             RequestProcessor2Class qbRequestProcessor;
             //js - Use the QBFC class to invoke the Request Processor
             QBSessionManager sessionManager = null;
+            //js - function vars
+            bool sessionBegun = false;
+            bool connectionOpen = false; 
 
             try
             {
@@ -506,14 +510,39 @@ namespace SubscribeAndHandleQBEvent
                 BuildPurchaseOrderQueryRq(requestMsgSet);
 
                 //-- connect to qb
+                sessionManager.OpenConnection("", "Redstone Print and Mail");
+                connectionOpen = true; 
+                sessionManager.BeginSession("", ENOpenMode.omDontCare);
+                sessionBegun = true; 
+                
+                //-- send the request and get the response from qb
+                IMsgSetResponse resMsgSet = sessionManager.DoRequests(requestMsgSet); 
+                
+                //-- end the session and close the connection to qb
+                sessionManager.EndSession();
+                sessionBegun = false; 
+                sessionManager.CloseConnection();
+                connectionOpen = false; 
+                
+                //-- walk response set
+                WalkPurchaseOrderQueryRs(resMsgSet);
             }
             catch (Exception ex)
             {
-                Console.WriteLing("JHA - Error while trying to do a purchase order query - " + ex.Message);
-                qbRequestProcessor = null;
-                return;
+                MessageBox.Show(ex.Message, "Error");
+                
+                if (sessionBegun)
+                {
+                    sessionManager.EndSession();    
+                }
+
+                if (connectionOpen)
+                {
+                    sessionManager.CloseConnection();
+                }
             }
-        } // END OF: SubscribeForEvents
+            
+        } // END OF: SubscribeForEvents () {}
 
         // Unsubscribes this application from listening to add/modify/delete custmor event
         private static void UnsubscribeForEvents(QBSubscriptionType strType, bool bSilent)
@@ -557,6 +586,7 @@ namespace SubscribeAndHandleQBEvent
             }
 
             return;
+            
         } // END OF: UnsubscribeForEvents 
 
         // This Method returns the qbXML for Subscribing this application to QB for listening 
@@ -615,6 +645,7 @@ namespace SubscribeAndHandleQBEvent
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\DataEvent.xml", strRetString);
             return strRetString;
+            
         } // END OF: GetDataEventSubscriptionAddXML(){}
 
         // This Method returns the qbXML for the Adding a UI extension to the customer menu.
@@ -659,14 +690,14 @@ namespace SubscribeAndHandleQBEvent
             XmlElement menuExtensionSubscription = requestXMLDoc.CreateElement("MenuExtensionSubscription");
             uiExtEventSubscriptionAdd.AppendChild(menuExtensionSubscription);
 
-            //Add To menu Item // To Cusomter Menu
+            // Add To menu Item // To Cusomter Menu
             menuExtensionSubscription.AppendChild(requestXMLDoc.CreateElement("AddToMenu")).InnerText = "Customers";
 
 
             XmlElement menuItem = requestXMLDoc.CreateElement("MenuItem");
             menuExtensionSubscription.AppendChild(menuItem);
 
-            //Add Menu Name
+            // Add Menu Name
             menuItem.AppendChild(requestXMLDoc.CreateElement("MenuText")).InnerText = strMenuName;
             menuItem.AppendChild(requestXMLDoc.CreateElement("EventTag")).InnerText = "menu_" + strMenuName;
 
@@ -680,11 +711,13 @@ namespace SubscribeAndHandleQBEvent
 
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\UIExtension.xml", strRetString);
+            
             return strRetString;
-        }
+            
+        } // END OF: GetUIExtensionSubscriptionAddXML(){}
 
-        // This Method returns the qbXML for deleting the event subscription for this application
-        // from QB
+        // This Method returns the qbXML for deleting the event subscription 
+        // for this application from QB
         private static string GetSubscriptionDeleteXML(QBSubscriptionType subscriptionType)
         {
             //Create the qbXML request
@@ -720,7 +753,7 @@ namespace SubscribeAndHandleQBEvent
         // strFile Name should have complete Path of the file too
         private static void LogXmlData(string strFile, string strXML)
         {
-            System.IO.StreamWriter sw = new System.IO.StreamWriter(strFile);
+            StreamWriter sw = new StreamWriter(strFile);
             sw.WriteLine(strXML);
             sw.Flush();
             sw.Close();
@@ -729,7 +762,7 @@ namespace SubscribeAndHandleQBEvent
         /*****************************/
         /******** Custom Code ********/
         /*****************************/
-        public void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
+        private static void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
         {
             //-- prep obj for appending po info
             IPurchaseOrderQuery purchaseOrderQueryRq = requestMsgSet.AppendPurchaseOrderQueryRq();
@@ -740,7 +773,7 @@ namespace SubscribeAndHandleQBEvent
             purchaseOrderQueryRq.iteratorID.SetValue("j1_build");
 
             var ORTxnQueryElementType18203 = enORTxnQueryElementType.TxnIDList;
-
+            
             if (ORTxnQueryElementType18203 == enORTxnQueryElementType.TxnIDList)
             {
                 purchaseOrderQueryRq.ORTxnQuery.TxnIDList.Add("200000-1011023419");
@@ -760,11 +793,16 @@ namespace SubscribeAndHandleQBEvent
             {
                 //-- do a TON of stuff
             }
-            
+
             purchaseOrderQueryRq.IncludeLineItems.SetValue(true);
             purchaseOrderQueryRq.IncludeLinkedTxns.SetValue(true);
             purchaseOrderQueryRq.IncludeRetElementList.Add("ab");
             purchaseOrderQueryRq.OwnerIDList.Add(Guid.NewGuid().ToString());
+        }
+
+        private static void WalkPurchaseOrderQueryRs(IMsgSetResponse resMsgSet)
+        {
+            
         }
 
         /// <summary>
