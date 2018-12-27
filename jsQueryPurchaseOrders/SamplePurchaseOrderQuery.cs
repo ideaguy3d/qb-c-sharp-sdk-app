@@ -203,7 +203,8 @@ namespace SubscribeAndHandleQBEvent
                     //May create more than one of these if needed
                     PurchaseOrderQueryRq.ORTxnQuery.TxnFilter.CurrencyFilter.ORCurrencyFilter.FullNameList.Add("ab");
                 }
-            }
+            } // END OF: if(ORTxnQueryElementType18203 == enORTxnQueryElementType.TxnFilter){}
+            
             //Set field value for IncludeLineItems
             PurchaseOrderQueryRq.IncludeLineItems.SetValue(true);
             //Set field value for IncludeLinkedTxns
@@ -219,7 +220,8 @@ namespace SubscribeAndHandleQBEvent
         // 3 / 4 function
         private void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
         {
-            IResponseList responseList = responseMsgSet?.ResponseList;
+            if (responseMsgSet == null) return;
+            IResponseList responseList = responseMsgSet.ResponseList;
             if (responseList == null) return;
             //if we sent only one request, there is only one response, we'll walk the list for this sample
             for (int i = 0; i < responseList.Count; i++)

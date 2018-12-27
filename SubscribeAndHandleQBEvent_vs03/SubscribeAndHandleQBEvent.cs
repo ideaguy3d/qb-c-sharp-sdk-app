@@ -7,7 +7,7 @@ using Microsoft.Win32;
 using System.Text;
 using System.Threading;
 using Interop.QBXMLRP2;
-using Interop.QBFC13; 
+using Interop.QBFC13;
 
 namespace SubscribeAndHandleQBEvent
 {
@@ -16,10 +16,13 @@ namespace SubscribeAndHandleQBEvent
     {
         /// Initializes the thread for multi-threaded object concurrency.
         COINIT_MULTITHREADED = 0x0,
+
         /// Initializes the thread for apartment-threaded object concurrency. 
         COINIT_APARTMENTTHREADED = 0x2,
+
         /// Disables DDE for Ole1 support.
         COINIT_DISABLE_OLE1DDE = 0x4,
+
         /// Trades memory for speed.
         COINIT_SPEED_OVER_MEMORY = 0x8
     }
@@ -107,7 +110,21 @@ namespace SubscribeAndHandleQBEvent
     // or tlbexp.
     class SubscribeAndHandleQBEvent
     {
-        enum QBSubscriptionType { Data, UI, UIExtension };
+        enum QBSubscriptionType
+        {
+            Data,
+            UI,
+            UIExtension
+        };
+
+        enum enORTxnQueryElementType
+        {
+            TxnIDList,
+            RefNumberList,
+            RefNumberCaseSensitiveList,
+            TxnFilter
+        };
+
         static string strAppName = "Redstone Print and Mail";
 
         // CoInitializeEx() can be used to set the apartment model
@@ -149,17 +166,14 @@ namespace SubscribeAndHandleQBEvent
         public static Guid IID_IUnknown = new Guid("{00000000-0000-0000-C000-000000000046}");
         public static Guid IID_IDispatch = new Guid("{00020400-0000-0000-C000-000000000046}");
 
-        protected static uint m_uiMainThreadId;  // Stores the main thread's thread id.
-        protected static int m_iObjsInUse;  // Keeps a count on the total number of objects alive.
-        protected static int m_iServerLocks;// Keeps a lock count on this application.
-        
+        protected static uint m_uiMainThreadId; // Stores the main thread's thread id.
+        protected static int m_iObjsInUse; // Keeps a count on the total number of objects alive.
+        protected static int m_iServerLocks; // Keeps a lock count on this application.
+
         // This property returns the main thread's id.
         public static uint MainThreadId
         {
-            get
-            {
-                return m_uiMainThreadId;
-            }
+            get { return m_uiMainThreadId; }
         }
 
         // This method performs a thread-safe incrementation of the objects count.
@@ -286,7 +300,8 @@ namespace SubscribeAndHandleQBEvent
                     case "/regserver":
                         try
                         {
-                            string subkey = "CLSID\\" + Marshal.GenerateGuidForType(typeof(EventHandlerObj)).ToString("B");
+                            string subkey =
+                                "CLSID\\" + Marshal.GenerateGuidForType(typeof(EventHandlerObj)).ToString("B");
                             key = Registry.ClassesRoot.CreateSubKey(subkey);
                             key2 = key.CreateSubKey("LocalServer32");
                             key2.SetValue(null, Application.ExecutablePath);
@@ -302,6 +317,7 @@ namespace SubscribeAndHandleQBEvent
                             if (key2 != null)
                                 key2.Close();
                         }
+
                         bRet = false;
                         break;
 
@@ -309,7 +325,8 @@ namespace SubscribeAndHandleQBEvent
                     case "/unregserver":
                         try
                         {
-                            key = Registry.ClassesRoot.OpenSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(EventHandlerObj)).ToString("B"), true);
+                            key = Registry.ClassesRoot.OpenSubKey(
+                                "CLSID\\" + Marshal.GenerateGuidForType(typeof(EventHandlerObj)).ToString("B"), true);
                             key.DeleteSubKey("LocalServer32");
                         }
                         catch (Exception ex)
@@ -326,6 +343,7 @@ namespace SubscribeAndHandleQBEvent
                             UnsubscribeForEvents(QBSubscriptionType.Data, true); // don't display error 
                             UnsubscribeForEvents(QBSubscriptionType.UIExtension, true); // don't display error 
                         }
+
                         bRet = false;
                         break;
 
@@ -340,23 +358,23 @@ namespace SubscribeAndHandleQBEvent
                     //subscribing for UI Extension Event
                     case "-u":
                     case "/u":
+                    {
+                        //Subscribe for UI Extension event - Adding a menu item under Customer Menu in QB.
+                        //Get the Menu Item Name from Arguments
+                        if (args.Length < 2)
                         {
-                            //Subscribe for UI Extension event - Adding a menu item under Customer Menu in QB.
-                            //Get the Menu Item Name from Arguments
-                            if (args.Length < 2)
-                            {
-                                // Menu item name is not provided.
-                                // Display Usage and exit
-                                DisplayUsage();
-
-                            }
-                            else
-                            {
-                                SubscribeForEvents(QBSubscriptionType.UIExtension, args[1]);
-                            }
-                            bRet = false;
-                            break;
+                            // Menu item name is not provided.
+                            // Display Usage and exit
+                            DisplayUsage();
                         }
+                        else
+                        {
+                            SubscribeForEvents(QBSubscriptionType.UIExtension, args[1]);
+                        }
+
+                        bRet = false;
+                        break;
+                    }
 
                     case "-dd":
                     case "/dd":
@@ -388,16 +406,18 @@ namespace SubscribeAndHandleQBEvent
         {
             string strUsage = "Usage";
             strUsage += "\n -regserver \n\t:register as COM out of proc server";
-            strUsage += "\n -unregserver \n\t: unregister COM out of proc server. Also unsubscribes from all the events.";
+            strUsage +=
+                "\n -unregserver \n\t: unregister COM out of proc server. Also unsubscribes from all the events.";
             strUsage += "\n -d		\n\t: subscribe for customer add/modify/delete data event";
-            strUsage += "\n -u <Menu Name>   \n\t: subscribe for UI extension event. <Menu Name> will appear under customers menu in QB";
+            strUsage +=
+                "\n -u <Menu Name>   \n\t: subscribe for UI extension event. <Menu Name> will appear under customers menu in QB";
             strUsage += "\n -dd 		\n\t: unsubscribe for customer data event";
             strUsage += "\n -ud 		\n\t: unsubscribe for UI extension event";
             strUsage += "\n";
 
             Console.Write(strUsage);
         }
-   
+
         /**          ---- Julius ----
          ****************************************** 
           **** The more important functions!! ****
@@ -405,16 +425,16 @@ namespace SubscribeAndHandleQBEvent
          */
 
         // Subscribes this application to listen for Data event or UI extension event
-        private static void SubscribeForEvents(QBSubscriptionType strType, string strData) {
-            
+        private static void SubscribeForEvents(QBSubscriptionType strType, string strData)
+        {
             //js - The most critical Class, RequestProcessor2Class, this class enables me to
             //-- 1) open connection
             //-- 2) begin a session and specify file access preferences and authorization options
             //-- 3) Send qbXML requests and Get qbXML responses 
             RequestProcessor2Class qbRequestProcessor;
-            
-            sessionMan
-            
+            //js - Use the QBFC class to invoke the Request Processor
+            QBSessionManager sessionManager = null;
+
             try
             {
                 // Get an instance of the qbXMLRP Request Processor and
@@ -455,7 +475,9 @@ namespace SubscribeAndHandleQBEvent
                     // 3180 : if subscription already subscribed. NOT A NEAT WAY TO DO THIS, NEED TO EXPLORE THIS
                     if ((retStatusCode != "0") && (retStatusCode != "3180"))
                     {
-                        Console.WriteLine("Error while subscribing for events\n\terror Code - {0},\n\tSeverity - {1},\n\tError Message - {2}\n", retStatusCode, retStatusSeverity, retStatusMessage);
+                        Console.WriteLine(
+                            "Error while subscribing for events\n\terror Code - {0},\n\tSeverity - {1},\n\tError Message - {2}\n",
+                            retStatusCode, retStatusSeverity, retStatusMessage);
                         return;
                     }
                 }
@@ -466,15 +488,24 @@ namespace SubscribeAndHandleQBEvent
                 qbRequestProcessor = null;
                 return;
             }
-            
+
             /*********************************************/
             /**************** CUSTOM CODE ****************/
             /*********************************************/
-            
-            //js -  Now try to to do a purchase order Query 
+
+            //js -  Now try to do a purchase order Query 
             try
             {
+                //-- create an instance of a session manager
+                sessionManager = new QBSessionManager();
+                //-- create the message set request object
+                IMsgSetRequest requestMsgSet = sessionManager.CreateMsgSetRequest("US", 13, 0);
+                requestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
 
+                //-- hoist a class function
+                BuildPurchaseOrderQueryRq(requestMsgSet);
+
+                //-- connect to qb
             }
             catch (Exception ex)
             {
@@ -482,7 +513,6 @@ namespace SubscribeAndHandleQBEvent
                 qbRequestProcessor = null;
                 return;
             }
-            
         } // END OF: SubscribeForEvents
 
         // Unsubscribes this application from listening to add/modify/delete custmor event
@@ -513,7 +543,9 @@ namespace SubscribeAndHandleQBEvent
 
                 if ((retStatusCode != "0") && (!bSilent))
                 {
-                    Console.WriteLine("Error while unsubscribing from events\n\terror Code - {0},\n\tSeverity - {1},\n\tError Message - {2}\n", retStatusCode, retStatusSeverity, retStatusMessage);
+                    Console.WriteLine(
+                        "Error while unsubscribing from events\n\terror Code - {0},\n\tSeverity - {1},\n\tError Message - {2}\n",
+                        retStatusCode, retStatusSeverity, retStatusMessage);
                     return;
                 }
             }
@@ -523,6 +555,7 @@ namespace SubscribeAndHandleQBEvent
                 qbRequestProcessor = null;
                 return;
             }
+
             return;
         } // END OF: UnsubscribeForEvents 
 
@@ -550,7 +583,8 @@ namespace SubscribeAndHandleQBEvent
             dataEventSubscriptionAddRq.AppendChild(dataEventSubscriptionAdd);
 
             // Add Subscription ID
-            dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText = "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
+            dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText =
+                "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
 
             // Add COM CallbackInfo
             XmlElement comCallbackInfo = requestXMLDoc.CreateElement("COMCallbackInfo");
@@ -558,10 +592,12 @@ namespace SubscribeAndHandleQBEvent
 
             // Appname and CLSID
             comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("AppName")).InnerText = strAppName;
-            comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("CLSID")).InnerText = "{62447F81-C195-446f-8201-94F0614E49D5}";
+            comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("CLSID")).InnerText =
+                "{62447F81-C195-446f-8201-94F0614E49D5}";
 
             // Delivery Policy
-            dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("DeliveryPolicy")).InnerText = "DeliverAlways";
+            dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("DeliveryPolicy")).InnerText =
+                "DeliverAlways";
 
             // track lost events
             dataEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("TrackLostEvents")).InnerText = "All";
@@ -579,7 +615,6 @@ namespace SubscribeAndHandleQBEvent
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\DataEvent.xml", strRetString);
             return strRetString;
-
         } // END OF: GetDataEventSubscriptionAddXML(){}
 
         // This Method returns the qbXML for the Adding a UI extension to the customer menu.
@@ -607,7 +642,8 @@ namespace SubscribeAndHandleQBEvent
             uiExtSubscriptionAddRq.AppendChild(uiExtEventSubscriptionAdd);
 
             // Add Subscription ID
-            uiExtEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText = "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
+            uiExtEventSubscriptionAdd.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText =
+                "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
 
             // Add COM CallbackInfo
             XmlElement comCallbackInfo = requestXMLDoc.CreateElement("COMCallbackInfo");
@@ -615,7 +651,8 @@ namespace SubscribeAndHandleQBEvent
 
             // Appname and CLSID
             comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("AppName")).InnerText = strAppName;
-            comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("CLSID")).InnerText = "{62447F81-C195-446f-8201-94F0614E49D5}";
+            comCallbackInfo.AppendChild(requestXMLDoc.CreateElement("CLSID")).InnerText =
+                "{62447F81-C195-446f-8201-94F0614E49D5}";
 
 
             //  MenuEventSubscription
@@ -644,7 +681,6 @@ namespace SubscribeAndHandleQBEvent
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\UIExtension.xml", strRetString);
             return strRetString;
-
         }
 
         // This Method returns the qbXML for deleting the event subscription for this application
@@ -667,16 +703,17 @@ namespace SubscribeAndHandleQBEvent
             qbXMLMsgsRq.AppendChild(qbSubscriptionDelRq);
 
             //Subscription ID
-            qbSubscriptionDelRq.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText = "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
+            qbSubscriptionDelRq.AppendChild(requestXMLDoc.CreateElement("SubscriberID")).InnerText =
+                "{8327c7fc-7f05-41ed-a5b4-b6618bb27bf1}";
 
             //Subscription Type
-            qbSubscriptionDelRq.AppendChild(requestXMLDoc.CreateElement("SubscriptionType")).InnerText = subscriptionType.ToString();
+            qbSubscriptionDelRq.AppendChild(requestXMLDoc.CreateElement("SubscriptionType")).InnerText =
+                subscriptionType.ToString();
 
 
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\Unsubscribe.xml", strRetString);
             return strRetString;
-
         } // GetSubscriptionDeleteXML(){}
 
         // Used only for debug purpose
@@ -689,14 +726,45 @@ namespace SubscribeAndHandleQBEvent
             sw.Close();
         }
 
-        /******************************/
-        /******** Code I Added ********/
-        /******************************/
-        private static string JuliusPurchaseOrderQueryOne()
+        /*****************************/
+        /******** Custom Code ********/
+        /*****************************/
+        public void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
         {
-            QBSessionManager qbSessionManager = null; 
+            //-- prep obj for appending po info
+            IPurchaseOrderQuery purchaseOrderQueryRq = requestMsgSet.AppendPurchaseOrderQueryRq();
 
-            return "julius";
+            //-- set values for the purchaseOrderQueryRq 
+            purchaseOrderQueryRq.metaData.SetValue(ENmetaData.mdMetaDataAndResponseData);
+            purchaseOrderQueryRq.iterator.SetValue(ENiterator.itContinue);
+            purchaseOrderQueryRq.iteratorID.SetValue("j1_build");
+
+            var ORTxnQueryElementType18203 = enORTxnQueryElementType.TxnIDList;
+
+            if (ORTxnQueryElementType18203 == enORTxnQueryElementType.TxnIDList)
+            {
+                purchaseOrderQueryRq.ORTxnQuery.TxnIDList.Add("200000-1011023419");
+            }
+
+            if (ORTxnQueryElementType18203 == enORTxnQueryElementType.RefNumberList)
+            {
+                purchaseOrderQueryRq.ORTxnQuery.RefNumberList.Add("ab");
+            }
+
+            if (ORTxnQueryElementType18203 == enORTxnQueryElementType.RefNumberCaseSensitiveList)
+            {
+                purchaseOrderQueryRq.ORTxnQuery.RefNumberCaseSensitiveList.Add("ab");
+            }
+
+            if (ORTxnQueryElementType18203 == enORTxnQueryElementType.TxnFilter)
+            {
+                //-- do a TON of stuff
+            }
+            
+            purchaseOrderQueryRq.IncludeLineItems.SetValue(true);
+            purchaseOrderQueryRq.IncludeLinkedTxns.SetValue(true);
+            purchaseOrderQueryRq.IncludeRetElementList.Add("ab");
+            purchaseOrderQueryRq.OwnerIDList.Add(Guid.NewGuid().ToString());
         }
 
         /// <summary>
@@ -718,15 +786,15 @@ namespace SubscribeAndHandleQBEvent
                 m_iObjsInUse = 0;
                 m_iServerLocks = 0;
                 m_uiMainThreadId = GetCurrentThreadId();
-                
+
                 // Register the EventHandlerObjClassFactory.
                 EventHandlerObjClassFactory factory = new EventHandlerObjClassFactory();
-                factory.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
+                factory.ClassContext = (uint) CLSCTX.CLSCTX_LOCAL_SERVER;
                 factory.ClassId = Marshal.GenerateGuidForType(typeof(EventHandlerObj));
-                factory.Flags = (uint)REGCLS.REGCLS_MULTIPLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
+                factory.Flags = (uint) REGCLS.REGCLS_MULTIPLEUSE | (uint) REGCLS.REGCLS_SUSPENDED;
                 factory.RegisterClassObject();
                 ClassFactoryBase.ResumeClassObjects();
-                
+
                 Console.WriteLine("Waiting for QB Customer Add Event .....\n");
 
                 // Start the message loop.
@@ -756,6 +824,5 @@ namespace SubscribeAndHandleQBEvent
                 Console.WriteLine("Unexpected error in program - " + ex.Message);
             }
         }
-
     }
 }

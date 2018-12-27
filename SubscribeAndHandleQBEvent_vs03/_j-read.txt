@@ -1,0 +1,13 @@
+
+12-26-2018 @ 3:56pm
+
+This is the primary project I'm using to learn
+and figure out how to read and write qbXML to
+QuickBooks. So far this is the only project that
+I have actually got to work with a real QuickBooks
+company file. 
+
+
+
+
+//
