@@ -223,12 +223,14 @@ namespace SubscribeAndHandleQBEvent
             PurchaseOrderQueryRq.OwnerIDList.Add(Guid.NewGuid().ToString());
         }
 
-        // 3 / 4 function
+        //-- 3 / 4 function
         private void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
         {
+            //-- a few null checks
             if (responseMsgSet == null) return;
             IResponseList responseList = responseMsgSet.ResponseList;
             if (responseList == null) return;
+            
             //if we sent only one request, there is only one response, we'll walk the list for this sample
             for (int i = 0; i < responseList.Count; i++)
             {
@@ -253,7 +255,7 @@ namespace SubscribeAndHandleQBEvent
             }
         }
 
-        // 4 / 4 function, MAIN FUNCTION... I think. 
+        //-- 4 / 4 function, MAIN FUNCTION... I think. 
         private void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
         {
             if (PurchaseOrderRet == null) return;

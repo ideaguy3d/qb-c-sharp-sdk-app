@@ -802,6 +802,37 @@ namespace SubscribeAndHandleQBEvent
 
         private static void WalkPurchaseOrderQueryRs(IMsgSetResponse resMsgSet)
         {
+            if (resMsgSet == null) return;
+            IResponseList responseList = resMsgSet.ResponseList;
+            if (responseList == null) return;
+
+            //-- if 1 request then 1 response, will walk list for practice           
+            for (int i = 0; i < responseList.Count; i++)
+            {
+                IResponse response = responseList.GetAt(i); 
+                
+                //-- check status code, 0=ok, >0 warning
+                if (response.StatusCode >= 0)
+                {
+                    // the request specific response is in .Detail
+                    if (response.Detail != null)
+                    {
+                        // make sure response is expected type
+                        ENResponseType responseType = (ENResponseType) response.Type.GetValue();
+
+                        if (responseType == ENResponseType.rtPurchaseOrderQueryRs)
+                        {
+                            // upcast to a more specific type, safe because it was checked with response type check above
+                            IPurchaseOrderRetList purchaseOrderRet = (IPurchaseOrderRetList) response.Detail;
+                            WalkPurchaseOrderRet(purchaseOrderRet);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void WalkPurchaseOrderRet(IPurchaseOrderRetList purchaseOrderRet)
+        {
             
         }
 
