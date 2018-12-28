@@ -1,4 +1,8 @@
 using System;
+using System.Net; 
+using System.Collections; 
+using System.ComponentModel; 
+using System.Data; 
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -833,7 +837,12 @@ namespace SubscribeAndHandleQBEvent
 
         private static void WalkPurchaseOrderRet(IPurchaseOrderRetList purchaseOrderRet)
         {
+            if (purchaseOrderRet == null) return; 
             
+            //-- go through all the elements of IPurchaseOrderRetList
+            
+            //-- get value of TxnID
+            var TxnID18210 = purchaseOrderRet.TxnID.GetValue(); 
         }
 
         /// <summary>
@@ -855,7 +864,7 @@ namespace SubscribeAndHandleQBEvent
                 m_iObjsInUse = 0;
                 m_iServerLocks = 0;
                 m_uiMainThreadId = GetCurrentThreadId();
-
+                
                 // Register the EventHandlerObjClassFactory.
                 EventHandlerObjClassFactory factory = new EventHandlerObjClassFactory();
                 factory.ClassContext = (uint) CLSCTX.CLSCTX_LOCAL_SERVER;
