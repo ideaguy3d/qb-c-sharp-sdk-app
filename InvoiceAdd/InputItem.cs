@@ -60,60 +60,59 @@ namespace InvoiceAdd
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InputItem));
-            this.label1 = new System.Windows.Forms.Label();
-            this.cmboBx2_Item = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btn1_OK = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(8, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(264, 16);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Below are the available items in QuickBooks:";
-            // 
-            // cmboBx2_Item
-            // 
-            this.cmboBx2_Item.Location = new System.Drawing.Point(8, 24);
-            this.cmboBx2_Item.Name = "cmboBx2_Item";
-            this.cmboBx2_Item.Size = new System.Drawing.Size(264, 21);
-            this.cmboBx2_Item.TabIndex = 62;
-            this.cmboBx2_Item.SelectedIndexChanged += new System.EventHandler(this.cmboBx2_Item_SelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(8, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(112, 16);
-            this.label2.TabIndex = 63;
-            this.label2.Text = "Click OK when done.";
-            // 
-            // btn1_OK
-            // 
-            this.btn1_OK.Location = new System.Drawing.Point(208, 48);
-            this.btn1_OK.Name = "btn1_OK";
-            this.btn1_OK.Size = new System.Drawing.Size(64, 24);
-            this.btn1_OK.TabIndex = 64;
-            this.btn1_OK.Text = "OK";
-            this.btn1_OK.Click += new System.EventHandler(this.btn1_OK_Click);
-            // 
-            // InputItem
-            // 
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(280, 76);
-            this.Controls.Add(this.btn1_OK);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.cmboBx2_Item);
-            this.Controls.Add(this.label1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "InputItem";
-            this.Text = "Select an item";
-            this.Load += new System.EventHandler(this.InputItem_Load);
-            this.ResumeLayout(false);
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(InputItem));
+			this.label1 = new System.Windows.Forms.Label();
+			this.cmboBx2_Item = new System.Windows.Forms.ComboBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.btn1_OK = new System.Windows.Forms.Button();
+			this.SuspendLayout();
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(8, 8);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(264, 16);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Below are the available items in QuickBooks:";
+			// 
+			// cmboBx2_Item
+			// 
+			this.cmboBx2_Item.Location = new System.Drawing.Point(8, 24);
+			this.cmboBx2_Item.Name = "cmboBx2_Item";
+			this.cmboBx2_Item.Size = new System.Drawing.Size(264, 21);
+			this.cmboBx2_Item.TabIndex = 62;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(8, 48);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(112, 16);
+			this.label2.TabIndex = 63;
+			this.label2.Text = "Click OK when done.";
+			// 
+			// btn1_OK
+			// 
+			this.btn1_OK.Location = new System.Drawing.Point(208, 48);
+			this.btn1_OK.Name = "btn1_OK";
+			this.btn1_OK.Size = new System.Drawing.Size(64, 24);
+			this.btn1_OK.TabIndex = 64;
+			this.btn1_OK.Text = "OK";
+			this.btn1_OK.Click += new System.EventHandler(this.btn1_OK_Click);
+			// 
+			// InputItem
+			// 
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(224)), ((System.Byte)(224)), ((System.Byte)(224)));
+			this.ClientSize = new System.Drawing.Size(280, 76);
+			this.Controls.Add(this.btn1_OK);
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this.cmboBx2_Item);
+			this.Controls.Add(this.label1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Name = "InputItem";
+			this.Text = "Select an item";
+			this.Load += new System.EventHandler(this.InputItem_Load);
+			this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -339,9 +338,6 @@ namespace InvoiceAdd
 			Dispose();
 		}
 
-        private void cmboBx2_Item_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-        }
-    } // public class
+	} // public class
 } // namespace

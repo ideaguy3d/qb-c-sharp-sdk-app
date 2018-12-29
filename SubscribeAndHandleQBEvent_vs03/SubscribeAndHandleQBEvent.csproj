@@ -121,6 +121,7 @@
     <Compile Include="IClassFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="JsPurchaseOrder.cs" />
     <Compile Include="ReferenceCountedObject.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -17,12 +17,10 @@ namespace SubscribeAndHandleQBEvent
 {
     public class PurchaseOrderQuerySample
     {
-        // 1 / 4 function 
         public void DoPurchaseOrderQuery()
         {
             bool sessionBegun = false;
             bool connectionOpen = false;
-            
             //js - QBSessionManager is the RequestProcessor for QBFC
             //-- this class will open connection, begin session, and manage requests and responses
             QBSessionManager sessionManager = null;
@@ -32,16 +30,15 @@ namespace SubscribeAndHandleQBEvent
                 //Create the session Manager object
                 sessionManager = new QBSessionManager();
 
-                //Create the "message set" request object to hold our request
+                //Create the message set request object to hold our request
                 IMsgSetRequest requestMsgSet = sessionManager.CreateMsgSetRequest("US", 13, 0);
                 requestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-                
-                // Hoist a class function
+
                 BuildPurchaseOrderQueryRq(requestMsgSet);
 
                 //Connect to QuickBooks and begin a session
-                //js - sessionManager won't return a sessionTicket because this is handled internally  
-                //-- by QBFC13 when using QBXMLRP2 .openConnection() will return a sessionTicket 
+                //js - sessionManager won't return a sessionTicket because this is handled internally by QBFC13
+                //-- when using QBXMLRP2 .openConnection() will return a sessionTicket 
                 sessionManager.OpenConnection("", "Redstone Print and Mail");
                 connectionOpen = true;
                 sessionManager.BeginSession("", ENOpenMode.omDontCare);
@@ -61,52 +58,49 @@ namespace SubscribeAndHandleQBEvent
             catch (Exception e)
             {
                 MessageBox.Show(e.Message, "Error");
+
                 if (sessionBegun)
                 {
                     sessionManager.EndSession();
                 }
+
                 if (connectionOpen)
                 {
                     sessionManager.CloseConnection();
-                }
+                } 
             }
         }
 
-        // 2 / 4 function, gets invoked in DoPurchaseOrderQuery()
-        private void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
+        public void BuildPurchaseOrderQueryRq(IMsgSetRequest requestMsgSet)
         {
             IPurchaseOrderQuery PurchaseOrderQueryRq = requestMsgSet.AppendPurchaseOrderQueryRq();
-            //js - Set attributes
+            //js - changed to an enum, Set attributes
             //Set field value for metaData
-            PurchaseOrderQueryRq.metaData.SetValue(ENmetaData.mdMetaDataAndResponseData);
-            //Set field value for iterator
+            PurchaseOrderQueryRq.metaData.SetValue(ENmetaData.mdNoMetaData);
+            //js - changed to an enum
+            //Set field value for iterator, "IQBENiteratorType"
             PurchaseOrderQueryRq.iterator.SetValue(ENiterator.itContinue);
             //Set field value for iteratorID
             PurchaseOrderQueryRq.iteratorID.SetValue("IQBUUIDType");
-            
             string ORTxnQueryElementType18203 = "TxnIDList";
-            
             if (ORTxnQueryElementType18203 == "TxnIDList")
             {
                 //Set field value for TxnIDList
                 //May create more than one of these if needed
                 PurchaseOrderQueryRq.ORTxnQuery.TxnIDList.Add("200000-1011023419");
             }
-            
             if (ORTxnQueryElementType18203 == "RefNumberList")
             {
                 //Set field value for RefNumberList
                 //May create more than one of these if needed
                 PurchaseOrderQueryRq.ORTxnQuery.RefNumberList.Add("ab");
             }
-            
             if (ORTxnQueryElementType18203 == "RefNumberCaseSensitiveList")
             {
                 //Set field value for RefNumberCaseSensitiveList
                 //May create more than one of these if needed
                 PurchaseOrderQueryRq.ORTxnQuery.RefNumberCaseSensitiveList.Add("ab");
             }
-     
             if (ORTxnQueryElementType18203 == "TxnFilter")
             {
                 //Set field value for MaxReturned
@@ -209,8 +203,7 @@ namespace SubscribeAndHandleQBEvent
                     //May create more than one of these if needed
                     PurchaseOrderQueryRq.ORTxnQuery.TxnFilter.CurrencyFilter.ORCurrencyFilter.FullNameList.Add("ab");
                 }
-            } // END OF: if(ORTxnQueryElementType18203 == enORTxnQueryElementType.TxnFilter){}
-            
+            }
             //Set field value for IncludeLineItems
             PurchaseOrderQueryRq.IncludeLineItems.SetValue(true);
             //Set field value for IncludeLinkedTxns
@@ -223,19 +216,15 @@ namespace SubscribeAndHandleQBEvent
             PurchaseOrderQueryRq.OwnerIDList.Add(Guid.NewGuid().ToString());
         }
 
-        //-- 3 / 4 function
-        private void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
+        public void WalkPurchaseOrderQueryRs(IMsgSetResponse responseMsgSet)
         {
-            //-- a few null checks
             if (responseMsgSet == null) return;
             IResponseList responseList = responseMsgSet.ResponseList;
             if (responseList == null) return;
-            
             //if we sent only one request, there is only one response, we'll walk the list for this sample
             for (int i = 0; i < responseList.Count; i++)
             {
                 IResponse response = responseList.GetAt(i);
-                
                 //check the status code of the response, 0=ok, >0 is warning
                 if (response.StatusCode >= 0)
                 {
@@ -256,8 +245,7 @@ namespace SubscribeAndHandleQBEvent
             }
         }
 
-        //-- 4 / 4 function, MAIN FUNCTION... I think. 
-        private void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
+        public void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
         {
             if (PurchaseOrderRet == null) return;
             //Go through all the elements of IPurchaseOrderRetList
@@ -269,11 +257,14 @@ namespace SubscribeAndHandleQBEvent
             DateTime TimeModified18212 = (DateTime)PurchaseOrderRet.TimeModified.GetValue();
             //Get value of EditSequence
             string EditSequence18213 = (string)PurchaseOrderRet.EditSequence.GetValue();
+            
             //Get value of TxnNumber
             if (PurchaseOrderRet.TxnNumber != null)
             {
                 int TxnNumber18214 = (int)PurchaseOrderRet.TxnNumber.GetValue();
             }
+
+            // vendor ref
             if (PurchaseOrderRet.VendorRef != null)
             {
                 //Get value of ListID
@@ -287,6 +278,8 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18216 = (string)PurchaseOrderRet.VendorRef.FullName.GetValue();
                 }
             }
+
+            // class ref
             if (PurchaseOrderRet.ClassRef != null)
             {
                 //Get value of ListID
@@ -300,6 +293,8 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18218 = (string)PurchaseOrderRet.ClassRef.FullName.GetValue();
                 }
             }
+
+            // inventory site ref
             if (PurchaseOrderRet.InventorySiteRef != null)
             {
                 //Get value of ListID
@@ -313,6 +308,8 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18220 = (string)PurchaseOrderRet.InventorySiteRef.FullName.GetValue();
                 }
             }
+
+            // ship to entity ref
             if (PurchaseOrderRet.ShipToEntityRef != null)
             {
                 //Get value of ListID
@@ -326,6 +323,8 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18222 = (string)PurchaseOrderRet.ShipToEntityRef.FullName.GetValue();
                 }
             }
+
+            // template ref
             if (PurchaseOrderRet.TemplateRef != null)
             {
                 //Get value of ListID
@@ -339,13 +338,17 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18224 = (string)PurchaseOrderRet.TemplateRef.FullName.GetValue();
                 }
             }
+
             //Get value of TxnDate
             DateTime TxnDate18225 = (DateTime)PurchaseOrderRet.TxnDate.GetValue();
+
             //Get value of RefNumber
             if (PurchaseOrderRet.RefNumber != null)
             {
                 string RefNumber18226 = (string)PurchaseOrderRet.RefNumber.GetValue();
             }
+            
+            // vendor address's 
             if (PurchaseOrderRet.VendorAddress != null)
             {
                 //Get value of Addr1
@@ -399,6 +402,8 @@ namespace SubscribeAndHandleQBEvent
                     string Note18236 = (string)PurchaseOrderRet.VendorAddress.Note.GetValue();
                 }
             }
+
+            // vendor address block
             if (PurchaseOrderRet.VendorAddressBlock != null)
             {
                 //Get value of Addr1
@@ -427,6 +432,8 @@ namespace SubscribeAndHandleQBEvent
                     string Addr518241 = (string)PurchaseOrderRet.VendorAddressBlock.Addr5.GetValue();
                 }
             }
+
+            // ship address
             if (PurchaseOrderRet.ShipAddress != null)
             {
                 //Get value of Addr1
@@ -480,6 +487,8 @@ namespace SubscribeAndHandleQBEvent
                     string Note18251 = (string)PurchaseOrderRet.ShipAddress.Note.GetValue();
                 }
             }
+
+            // ship address block
             if (PurchaseOrderRet.ShipAddressBlock != null)
             {
                 //Get value of Addr1
@@ -508,6 +517,8 @@ namespace SubscribeAndHandleQBEvent
                     string Addr518256 = (string)PurchaseOrderRet.ShipAddressBlock.Addr5.GetValue();
                 }
             }
+
+            // terms ref
             if (PurchaseOrderRet.TermsRef != null)
             {
                 //Get value of ListID
@@ -521,16 +532,20 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18258 = (string)PurchaseOrderRet.TermsRef.FullName.GetValue();
                 }
             }
+            
             //Get value of DueDate
             if (PurchaseOrderRet.DueDate != null)
             {
                 DateTime DueDate18259 = (DateTime)PurchaseOrderRet.DueDate.GetValue();
             }
+
             //Get value of ExpectedDate
             if (PurchaseOrderRet.ExpectedDate != null)
             {
                 DateTime ExpectedDate18260 = (DateTime)PurchaseOrderRet.ExpectedDate.GetValue();
             }
+
+            // ship method ref
             if (PurchaseOrderRet.ShipMethodRef != null)
             {
                 //Get value of ListID
@@ -544,16 +559,20 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18262 = (string)PurchaseOrderRet.ShipMethodRef.FullName.GetValue();
                 }
             }
+            
             //Get value of FOB
             if (PurchaseOrderRet.FOB != null)
             {
                 string FOB18263 = (string)PurchaseOrderRet.FOB.GetValue();
             }
+
             //Get value of TotalAmount
             if (PurchaseOrderRet.TotalAmount != null)
             {
                 double TotalAmount18264 = (double)PurchaseOrderRet.TotalAmount.GetValue();
             }
+
+            // currency ref
             if (PurchaseOrderRet.CurrencyRef != null)
             {
                 //Get value of ListID
@@ -567,51 +586,62 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18266 = (string)PurchaseOrderRet.CurrencyRef.FullName.GetValue();
                 }
             }
+            
             //Get value of ExchangeRate
             if (PurchaseOrderRet.ExchangeRate != null)
             {
                 IQBFloatType ExchangeRate18267 = (IQBFloatType)PurchaseOrderRet.ExchangeRate.GetValue();
             }
+            
             //Get value of TotalAmountInHomeCurrency
             if (PurchaseOrderRet.TotalAmountInHomeCurrency != null)
             {
                 double TotalAmountInHomeCurrency18268 = (double)PurchaseOrderRet.TotalAmountInHomeCurrency.GetValue();
             }
+
             //Get value of IsManuallyClosed
             if (PurchaseOrderRet.IsManuallyClosed != null)
             {
                 bool IsManuallyClosed18269 = (bool)PurchaseOrderRet.IsManuallyClosed.GetValue();
             }
+
             //Get value of IsFullyReceived
             if (PurchaseOrderRet.IsFullyReceived != null)
             {
                 bool IsFullyReceived18270 = (bool)PurchaseOrderRet.IsFullyReceived.GetValue();
             }
+            
             //Get value of Memo
             if (PurchaseOrderRet.Memo != null)
             {
                 string Memo18271 = (string)PurchaseOrderRet.Memo.GetValue();
             }
+
             //Get value of VendorMsg
             if (PurchaseOrderRet.VendorMsg != null)
             {
                 string VendorMsg18272 = (string)PurchaseOrderRet.VendorMsg.GetValue();
             }
+
             //Get value of IsToBePrinted
             if (PurchaseOrderRet.IsToBePrinted != null)
             {
                 bool IsToBePrinted18273 = (bool)PurchaseOrderRet.IsToBePrinted.GetValue();
             }
+            
             //Get value of IsToBeEmailed
             if (PurchaseOrderRet.IsToBeEmailed != null)
             {
                 bool IsToBeEmailed18274 = (bool)PurchaseOrderRet.IsToBeEmailed.GetValue();
             }
+           
             //Get value of IsTaxIncluded
             if (PurchaseOrderRet.IsTaxIncluded != null)
             {
                 bool IsTaxIncluded18275 = (bool)PurchaseOrderRet.IsTaxIncluded.GetValue();
             }
+
+            // sales tax code ref
             if (PurchaseOrderRet.SalesTaxCodeRef != null)
             {
                 //Get value of ListID
@@ -625,21 +655,26 @@ namespace SubscribeAndHandleQBEvent
                     string FullName18277 = (string)PurchaseOrderRet.SalesTaxCodeRef.FullName.GetValue();
                 }
             }
+            
             //Get value of Other1
             if (PurchaseOrderRet.Other1 != null)
             {
                 string Other118278 = (string)PurchaseOrderRet.Other1.GetValue();
             }
+            
             //Get value of Other2
             if (PurchaseOrderRet.Other2 != null)
             {
                 string Other218279 = (string)PurchaseOrderRet.Other2.GetValue();
             }
+            
             //Get value of ExternalGUID
             if (PurchaseOrderRet.ExternalGUID != null)
             {
                 string ExternalGUID18280 = (string)PurchaseOrderRet.ExternalGUID.GetValue();
             }
+
+            // linked transaction list
             if (PurchaseOrderRet.LinkedTxnList != null)
             {
                 for (int i18281 = 0; i18281 < PurchaseOrderRet.LinkedTxnList.Count; i18281++)
@@ -665,6 +700,9 @@ namespace SubscribeAndHandleQBEvent
                     double Amount18287 = (double)LinkedTxn.Amount.GetValue();
                 }
             }
+
+            // OR purchase order line return list, LOOP OVER THIS LIST
+            // I think these are equivelent to the "line items" in the UI  
             if (PurchaseOrderRet.ORPurchaseOrderLineRetList != null)
             {
                 for (int i18288 = 0; i18288 < PurchaseOrderRet.ORPurchaseOrderLineRetList.Count; i18288++)
@@ -722,11 +760,14 @@ namespace SubscribeAndHandleQBEvent
                                     string FullName18298 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.OverrideUOMSetRef.FullName.GetValue();
                                 }
                             }
+                           
                             //Get value of Rate
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Rate != null)
                             {
                                 double Rate18299 = (double)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Rate.GetValue();
                             }
+
+                            // list id and full name
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.ClassRef != null)
                             {
                                 //Get value of ListID
@@ -740,11 +781,14 @@ namespace SubscribeAndHandleQBEvent
                                     string FullName18301 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.ClassRef.FullName.GetValue();
                                 }
                             }
+                            
                             //Get value of Amount
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Amount != null)
                             {
                                 double Amount18302 = (double)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Amount.GetValue();
                             }
+
+                            // inventory site location ref
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.InventorySiteLocationRef != null)
                             {
                                 //Get value of ListID
@@ -758,6 +802,8 @@ namespace SubscribeAndHandleQBEvent
                                     string FullName18304 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.InventorySiteLocationRef.FullName.GetValue();
                                 }
                             }
+
+                            // customer ref "list id" and "full name" 
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.CustomerRef != null)
                             {
                                 //Get value of ListID
@@ -771,11 +817,13 @@ namespace SubscribeAndHandleQBEvent
                                     string FullName18306 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.CustomerRef.FullName.GetValue();
                                 }
                             }
+
                             //Get value of ServiceDate
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.ServiceDate != null)
                             {
                                 DateTime ServiceDate18307 = (DateTime)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.ServiceDate.GetValue();
                             }
+
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.SalesTaxCodeRef != null)
                             {
                                 //Get value of ListID
@@ -789,36 +837,45 @@ namespace SubscribeAndHandleQBEvent
                                     string FullName18309 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.SalesTaxCodeRef.FullName.GetValue();
                                 }
                             }
+
                             //Get value of ReceivedQuantity
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.ReceivedQuantity != null)
                             {
                                 int ReceivedQuantity18310 = (int)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.ReceivedQuantity.GetValue();
                             }
+
                             //Get value of UnbilledQuantity
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.UnbilledQuantity != null)
                             {
                                 int UnbilledQuantity18311 = (int)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.UnbilledQuantity.GetValue();
                             }
+
                             //Get value of IsBilled
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.IsBilled != null)
                             {
                                 bool IsBilled18312 = (bool)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.IsBilled.GetValue();
                             }
+
                             //Get value of IsManuallyClosed
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.IsManuallyClosed != null)
                             {
                                 bool IsManuallyClosed18313 = (bool)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.IsManuallyClosed.GetValue();
                             }
+
                             //Get value of Other1
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Other1 != null)
                             {
                                 string Other118314 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Other1.GetValue();
                             }
+
                             //Get value of Other2
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Other2 != null)
                             {
                                 string Other218315 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.Other2.GetValue();
                             }
+
+                            // data extention return list
+                            // INNER FOR-LOOP 
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.DataExtRetList != null)
                             {
                                 for (int i18316 = 0; i18316 < ORPurchaseOrderLineRet18289.PurchaseOrderLineRet.DataExtRetList.Count; i18316++)
@@ -839,37 +896,46 @@ namespace SubscribeAndHandleQBEvent
                             }
                         }
                     }
+
+                    // purchase order line group 
                     if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet != null)
                     {
                         if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet != null)
                         {
                             //Get value of TxnLineID
                             string TxnLineID18321 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.TxnLineID.GetValue();
+                            
                             //Get value of ListID
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.ItemGroupRef.ListID != null)
                             {
                                 string ListID18322 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.ItemGroupRef.ListID.GetValue();
                             }
+                            
                             //Get value of FullName
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.ItemGroupRef.FullName != null)
                             {
                                 string FullName18323 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.ItemGroupRef.FullName.GetValue();
                             }
+                            
                             //Get value of Desc
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.Desc != null)
                             {
                                 string Desc18324 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.Desc.GetValue();
                             }
+                           
                             //Get value of Quantity
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.Quantity != null)
                             {
                                 int Quantity18325 = (int)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.Quantity.GetValue();
                             }
+                            
                             //Get value of UnitOfMeasure
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.UnitOfMeasure != null)
                             {
                                 string UnitOfMeasure18326 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.UnitOfMeasure.GetValue();
                             }
+
+                            //
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.OverrideUOMSetRef != null)
                             {
                                 //Get value of ListID
@@ -883,10 +949,15 @@ namespace SubscribeAndHandleQBEvent
                                     string FullName18328 = (string)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.OverrideUOMSetRef.FullName.GetValue();
                                 }
                             }
+
                             //Get value of IsPrintItemsInGroup
                             bool IsPrintItemsInGroup18329 = (bool)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.IsPrintItemsInGroup.GetValue();
+                            
                             //Get value of TotalAmount
                             double TotalAmount18330 = (double)ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.TotalAmount.GetValue();
+
+                            // purchase order line return list
+                            // INNER FOR-LOOP
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.PurchaseOrderLineRetList != null)
                             {
                                 for (int i18331 = 0; i18331 < ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.PurchaseOrderLineRetList.Count; i18331++)
@@ -907,21 +978,25 @@ namespace SubscribeAndHandleQBEvent
                                             string FullName18334 = (string)PurchaseOrderLineRet.ItemRef.FullName.GetValue();
                                         }
                                     }
+
                                     //Get value of ManufacturerPartNumber
                                     if (PurchaseOrderLineRet.ManufacturerPartNumber != null)
                                     {
                                         string ManufacturerPartNumber18335 = (string)PurchaseOrderLineRet.ManufacturerPartNumber.GetValue();
                                     }
+
                                     //Get value of Desc
                                     if (PurchaseOrderLineRet.Desc != null)
                                     {
                                         string Desc18336 = (string)PurchaseOrderLineRet.Desc.GetValue();
                                     }
+
                                     //Get value of Quantity
                                     if (PurchaseOrderLineRet.Quantity != null)
                                     {
                                         int Quantity18337 = (int)PurchaseOrderLineRet.Quantity.GetValue();
                                     }
+
                                     //Get value of UnitOfMeasure
                                     if (PurchaseOrderLineRet.UnitOfMeasure != null)
                                     {
@@ -940,11 +1015,13 @@ namespace SubscribeAndHandleQBEvent
                                             string FullName18340 = (string)PurchaseOrderLineRet.OverrideUOMSetRef.FullName.GetValue();
                                         }
                                     }
+
                                     //Get value of Rate
                                     if (PurchaseOrderLineRet.Rate != null)
                                     {
                                         double Rate18341 = (double)PurchaseOrderLineRet.Rate.GetValue();
                                     }
+
                                     if (PurchaseOrderLineRet.ClassRef != null)
                                     {
                                         //Get value of ListID
@@ -958,11 +1035,15 @@ namespace SubscribeAndHandleQBEvent
                                             string FullName18343 = (string)PurchaseOrderLineRet.ClassRef.FullName.GetValue();
                                         }
                                     }
+
                                     //Get value of Amount
                                     if (PurchaseOrderLineRet.Amount != null)
                                     {
                                         double Amount18344 = (double)PurchaseOrderLineRet.Amount.GetValue();
                                     }
+
+
+                                    // inventory site location ref
                                     if (PurchaseOrderLineRet.InventorySiteLocationRef != null)
                                     {
                                         //Get value of ListID
@@ -976,6 +1057,8 @@ namespace SubscribeAndHandleQBEvent
                                             string FullName18346 = (string)PurchaseOrderLineRet.InventorySiteLocationRef.FullName.GetValue();
                                         }
                                     }
+
+                                    // customer ref
                                     if (PurchaseOrderLineRet.CustomerRef != null)
                                     {
                                         //Get value of ListID
@@ -989,11 +1072,14 @@ namespace SubscribeAndHandleQBEvent
                                             string FullName18348 = (string)PurchaseOrderLineRet.CustomerRef.FullName.GetValue();
                                         }
                                     }
+
                                     //Get value of ServiceDate
                                     if (PurchaseOrderLineRet.ServiceDate != null)
                                     {
                                         DateTime ServiceDate18349 = (DateTime)PurchaseOrderLineRet.ServiceDate.GetValue();
                                     }
+
+                                    // sales tax code ref
                                     if (PurchaseOrderLineRet.SalesTaxCodeRef != null)
                                     {
                                         //Get value of ListID
@@ -1007,36 +1093,45 @@ namespace SubscribeAndHandleQBEvent
                                             string FullName18351 = (string)PurchaseOrderLineRet.SalesTaxCodeRef.FullName.GetValue();
                                         }
                                     }
+
                                     //Get value of ReceivedQuantity
                                     if (PurchaseOrderLineRet.ReceivedQuantity != null)
                                     {
                                         int ReceivedQuantity18352 = (int)PurchaseOrderLineRet.ReceivedQuantity.GetValue();
                                     }
+
                                     //Get value of UnbilledQuantity
                                     if (PurchaseOrderLineRet.UnbilledQuantity != null)
                                     {
                                         int UnbilledQuantity18353 = (int)PurchaseOrderLineRet.UnbilledQuantity.GetValue();
                                     }
+
                                     //Get value of IsBilled
                                     if (PurchaseOrderLineRet.IsBilled != null)
                                     {
                                         bool IsBilled18354 = (bool)PurchaseOrderLineRet.IsBilled.GetValue();
                                     }
+
                                     //Get value of IsManuallyClosed
                                     if (PurchaseOrderLineRet.IsManuallyClosed != null)
                                     {
                                         bool IsManuallyClosed18355 = (bool)PurchaseOrderLineRet.IsManuallyClosed.GetValue();
                                     }
+
                                     //Get value of Other1
                                     if (PurchaseOrderLineRet.Other1 != null)
                                     {
                                         string Other118356 = (string)PurchaseOrderLineRet.Other1.GetValue();
                                     }
+
                                     //Get value of Other2
                                     if (PurchaseOrderLineRet.Other2 != null)
                                     {
                                         string Other218357 = (string)PurchaseOrderLineRet.Other2.GetValue();
                                     }
+
+                                    // data extention return list
+                                    // INNER FOR-LOOP
                                     if (PurchaseOrderLineRet.DataExtRetList != null)
                                     {
                                         for (int i18358 = 0; i18358 < PurchaseOrderLineRet.DataExtRetList.Count; i18358++)
@@ -1057,6 +1152,9 @@ namespace SubscribeAndHandleQBEvent
                                     }
                                 }
                             }
+
+                            // data extention return list
+                            // INNER FOR-LOOP
                             if (ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.DataExtRetList != null)
                             {
                                 for (int i18363 = 0; i18363 < ORPurchaseOrderLineRet18289.PurchaseOrderLineGroupRet.DataExtRetList.Count; i18363++)
@@ -1067,6 +1165,7 @@ namespace SubscribeAndHandleQBEvent
                                     {
                                         string OwnerID18364 = (string)DataExtRet.OwnerID.GetValue();
                                     }
+
                                     //Get value of DataExtName
                                     string DataExtName18365 = (string)DataExtRet.DataExtName.GetValue();
                                     //Get value of DataExtType
@@ -1080,6 +1179,8 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
 
+            // data extention return list
+            // INNER FOR-LOOP
             if (PurchaseOrderRet.DataExtRetList != null)
             {
                 for (int i18368 = 0; i18368 < PurchaseOrderRet.DataExtRetList.Count; i18368++)
@@ -1099,6 +1200,5 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
         }
-        
-    } // END OF: class PurchaseOrderQuerySample {}
+    }
 }
