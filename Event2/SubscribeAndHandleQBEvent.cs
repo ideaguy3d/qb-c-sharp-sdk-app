@@ -496,7 +496,7 @@ namespace SubscribeAndHandleQBEvent
 
             try
             {
-
+                
             }
             catch(Exception ex)
             {

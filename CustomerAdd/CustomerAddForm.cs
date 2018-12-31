@@ -18,11 +18,7 @@
 
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Data;
 using System.Xml;
 using Interop.QBXMLRP2;
 
@@ -41,6 +37,7 @@ namespace CustomerAdd
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox CustName;
 		private System.Windows.Forms.Label label1;
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -80,89 +77,88 @@ namespace CustomerAdd
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label3 = new System.Windows.Forms.Label();
-			this.Exit = new System.Windows.Forms.Button();
-			this.AddCustomer = new System.Windows.Forms.Button();
-			this.Phone = new System.Windows.Forms.TextBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.CustName = new System.Windows.Forms.TextBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(16, 96);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(200, 32);
-			this.label3.TabIndex = 13;
-			this.label3.Text = "Note: You need to have QuickBooks with a company file opened.";
-			// 
-			// Exit
-			// 
-			this.Exit.Location = new System.Drawing.Point(288, 112);
-			this.Exit.Name = "Exit";
-			this.Exit.Size = new System.Drawing.Size(120, 24);
-			this.Exit.TabIndex = 12;
-			this.Exit.Text = "Exit";
-			this.Exit.Click += new System.EventHandler(this.Exit_Click);
-			// 
-			// AddCustomer
-			// 
-			this.AddCustomer.Location = new System.Drawing.Point(288, 80);
-			this.AddCustomer.Name = "AddCustomer";
-			this.AddCustomer.Size = new System.Drawing.Size(120, 24);
-			this.AddCustomer.TabIndex = 11;
-			this.AddCustomer.Text = "Add Customer";
-			this.AddCustomer.Click += new System.EventHandler(this.AddCustomer_Click);
-			// 
-			// Phone
-			// 
-			this.Phone.Location = new System.Drawing.Point(96, 40);
-			this.Phone.Name = "Phone";
-			this.Phone.Size = new System.Drawing.Size(176, 20);
-			this.Phone.TabIndex = 10;
-			this.Phone.Text = "";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(16, 40);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(72, 16);
-			this.label2.TabIndex = 9;
-			this.label2.Text = "Phone";
-			// 
-			// CustName
-			// 
-			this.CustName.Location = new System.Drawing.Point(96, 16);
-			this.CustName.Name = "CustName";
-			this.CustName.Size = new System.Drawing.Size(312, 20);
-			this.CustName.TabIndex = 8;
-			this.CustName.Text = "";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 16);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(72, 16);
-			this.label1.TabIndex = 7;
-			this.label1.Text = "Name";
-			// 
-			// CustomerAddForm
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(448, 149);
-			this.Controls.AddRange(new System.Windows.Forms.Control[] {
-																		  this.label3,
-																		  this.Exit,
-																		  this.AddCustomer,
-																		  this.Phone,
-																		  this.label2,
-																		  this.CustName,
-																		  this.label1});
-			this.Name = "CustomerAddForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "CustomerAdd";
-			this.ResumeLayout(false);
+            this.label3 = new System.Windows.Forms.Label();
+            this.Exit = new System.Windows.Forms.Button();
+            this.AddCustomer = new System.Windows.Forms.Button();
+            this.Phone = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.CustName = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(16, 96);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(200, 32);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Note: You need to have QuickBooks with a company file opened.";
+            // 
+            // Exit
+            // 
+            this.Exit.Location = new System.Drawing.Point(288, 112);
+            this.Exit.Name = "Exit";
+            this.Exit.Size = new System.Drawing.Size(120, 24);
+            this.Exit.TabIndex = 12;
+            this.Exit.Text = "Exit";
+            this.Exit.Click += new System.EventHandler(this.Exit_Click);
+            // 
+            // AddCustomer
+            // 
+            this.AddCustomer.Location = new System.Drawing.Point(288, 80);
+            this.AddCustomer.Name = "AddCustomer";
+            this.AddCustomer.Size = new System.Drawing.Size(120, 24);
+            this.AddCustomer.TabIndex = 11;
+            this.AddCustomer.Text = "Add Customer";
+            this.AddCustomer.Click += new System.EventHandler(this.AddCustomer_Click);
+            // 
+            // Phone
+            // 
+            this.Phone.Location = new System.Drawing.Point(96, 40);
+            this.Phone.Name = "Phone";
+            this.Phone.Size = new System.Drawing.Size(176, 20);
+            this.Phone.TabIndex = 10;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(16, 40);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 16);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Phone";
+            // 
+            // CustName
+            // 
+            this.CustName.Location = new System.Drawing.Point(96, 16);
+            this.CustName.Name = "CustName";
+            this.CustName.Size = new System.Drawing.Size(312, 20);
+            this.CustName.TabIndex = 8;
+            this.CustName.TextChanged += new System.EventHandler(this.CustName_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(72, 16);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Name";
+            // 
+            // CustomerAddForm
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(448, 149);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.Exit);
+            this.Controls.Add(this.AddCustomer);
+            this.Controls.Add(this.Phone);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.CustName);
+            this.Controls.Add(this.label1);
+            this.Name = "CustomerAddForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "CustomerAdd";
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
@@ -283,5 +279,10 @@ namespace CustomerAdd
 			} //End of customerAddRs
 
 		}
-	}
+
+        private void CustName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
 }
