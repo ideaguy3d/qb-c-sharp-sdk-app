@@ -594,10 +594,32 @@ namespace SubscribeAndHandleQBEvent
                         "statusCode = {0}, statusSeverity = {1}, statusMessage = {2}",
                         statusCode, statusSeverity, statusMessage
                     );
-                    
+
                     // get PurchaseOrderAddRs > PurchaseOrderRet node
-                    XmlNodeList purchaseOrderAddRsNodeList = qbXmlMsgsRsNodeList.Item(0).ChildNodes; 
+                    XmlNodeList purchaseOrderAddRsNodeList = qbXmlMsgsRsNodeList.Item(0).ChildNodes;
+                    if (purchaseOrderAddRsNodeList.Item(0).Name.Equals("PurchaseOrderRet"))
+                    {
+                        XmlNodeList purchaseOrderAddRetNodeList = purchaseOrderAddRsNodeList.Item(0).ChildNodes;
+                        foreach (XmlNode purchaseOrderAddRetNode in purchaseOrderAddRetNodeList)
+                        {
+                            if (purchaseOrderAddRetNode.Name.Equals("TxnID"))
+                            {
+                                txtMessage.AppendFormat(
+                                    "\r\n__>> Purchase_Order_Add TxnID = {0}",
+                                    purchaseOrderAddRetNode.InnerText
+                                );
+                            }
+                            else if (purchaseOrderAddRetNode.Name.Equals("VendorRef"))
+                            {
+                                txtMessage.AppendFormat(
+                                    "\r\n__>> Purchase_Order_Add inner xml = {0}",
+                                    purchaseOrderAddRetNode.InnerXml
+                                );
+                            }
+                        }
+                    }
                     
+                    LogTxtData(@"C:\Temp\PurchaseOrderAddEventData.txt", txtMessage);
                 }
             }
             catch (Exception ex)
@@ -814,7 +836,7 @@ namespace SubscribeAndHandleQBEvent
             sw.Close();
         }
 
-        private static void LogTxtData(string filePath, string strTxt)
+        private static void LogTxtData(string filePath, StringBuilder strTxt)
         {
             StreamWriter sw = new StreamWriter(filePath);
             sw.WriteLine(strTxt);
