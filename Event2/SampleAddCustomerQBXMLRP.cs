@@ -212,7 +212,8 @@ namespace CustomerAdd
             }
 
             string input = inputXMLDoc.OuterXml;
-            //step3: do the qbXMLRP request
+
+            //-- step3: do the qbXMLRP request
             RequestProcessor2 rp = null;
             string ticket = null;
             string response = null;
@@ -241,7 +242,7 @@ namespace CustomerAdd
                 }
             }
 
-            //step4: parse the XML response and show a message
+            //-- step4: parse the XML response and show a message
             XmlDocument outputXMLDoc = new XmlDocument();
             outputXMLDoc.LoadXml(response);
             XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("CustomerAddRs");

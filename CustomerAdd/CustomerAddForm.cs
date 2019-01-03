@@ -1,4 +1,3 @@
-
 /*-----------------------------------------------------------
  * CustomerAddForm : implementation file
  *
@@ -9,12 +8,12 @@
  *
  * Created On: 8/15/2002
  *
- * Copyright © 2002-2013 Intuit Inc. All rights reserved.
+ * Copyright ï¿½ 2002-2013 Intuit Inc. All rights reserved.
  * Use is subject to the terms specified at:
  *      http://developer.intuit.com/legal/devsite_tos.html
  *
  *----------------------------------------------------------
- */ 
+ */
 
 
 using System;
@@ -24,59 +23,61 @@ using Interop.QBXMLRP2;
 
 namespace CustomerAdd
 {
-	/// <summary>
-	/// CustomerAddForm shows how to invoke QuickBooks qbXMLRP COM object
-	/// It uses .NET to create qbXML request and parse qbXML response
-	/// </summary>
-	public class CustomerAddForm : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Button Exit;
-		private System.Windows.Forms.Button AddCustomer;
-		private System.Windows.Forms.TextBox Phone;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox CustName;
-		private System.Windows.Forms.Label label1;
+    /// <summary>
+    /// CustomerAddForm shows how to invoke QuickBooks qbXMLRP COM object
+    /// It uses .NET to create qbXML request and parse qbXML response
+    /// </summary>
+    public class CustomerAddForm : System.Windows.Forms.Form
+    {
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button Exit;
+        private System.Windows.Forms.Button AddCustomer;
+        private System.Windows.Forms.TextBox Phone;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox CustName;
+        private System.Windows.Forms.Label label1;
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
 
-		public CustomerAddForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+        public CustomerAddForm()
+        {
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+            //
+            // TODO: Add any constructor code after InitializeComponent call
+            //
+        }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.label3 = new System.Windows.Forms.Label();
             this.Exit = new System.Windows.Forms.Button();
             this.AddCustomer = new System.Windows.Forms.Button();
@@ -159,130 +160,136 @@ namespace CustomerAdd
             this.Text = "CustomerAdd";
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
 
-		}
-		#endregion
-		static void Main() 
-		{
-			Application.Run(new CustomerAddForm());
-		}
+        #endregion
 
-		private void Exit_Click(object sender, System.EventArgs e)
-		{
-			this.Close();
+        static void Main()
+        {
+            Application.Run(new CustomerAddForm());
+        }
 
-		}
+        private void Exit_Click(object sender, System.EventArgs e)
+        {
+            this.Close();
+        }
 
-		private void AddCustomer_Click(object sender, System.EventArgs e)
-		{
-			//step1: verify that Name is not empty
-			String name = CustName.Text.Trim() ;
-			if( name.Length == 0 )
-			{
-				MessageBox.Show("Please enter a value for Name.", "Input Validation");
-				return;
-			} 
+        private void AddCustomer_Click(object sender, System.EventArgs e)
+        {
+            //step1: verify that Name is not empty
+            String name = CustName.Text.Trim();
 
-			//step2: create the qbXML request
-			XmlDocument inputXMLDoc = new XmlDocument();
-			inputXMLDoc.AppendChild(inputXMLDoc.CreateXmlDeclaration("1.0",null, null));
-			inputXMLDoc.AppendChild(inputXMLDoc.CreateProcessingInstruction("qbxml", "version=\"2.0\""));
-			XmlElement qbXML = inputXMLDoc.CreateElement("QBXML");
-			inputXMLDoc.AppendChild(qbXML);
-			XmlElement qbXMLMsgsRq = inputXMLDoc.CreateElement("QBXMLMsgsRq");
-			qbXML.AppendChild(qbXMLMsgsRq);
-			qbXMLMsgsRq.SetAttribute("onError", "stopOnError");
-			XmlElement custAddRq = inputXMLDoc.CreateElement("CustomerAddRq");
-			qbXMLMsgsRq.AppendChild(custAddRq);
-			custAddRq.SetAttribute("requestID", "1");
-			XmlElement custAdd = inputXMLDoc.CreateElement("CustomerAdd");
-			custAddRq.AppendChild(custAdd);	
-			custAdd.AppendChild(inputXMLDoc.CreateElement("Name")).InnerText=name;
-			if( Phone.Text.Length  > 0  )
-			{
-				custAdd.AppendChild(inputXMLDoc.CreateElement("Phone")).InnerText=Phone.Text;
-			}
-	
-			string input = inputXMLDoc.OuterXml;
-			//step3: do the qbXMLRP request
-			RequestProcessor2 rp = null; 
-			string ticket = null;
-			string response = null;
-			try 
-			{
-				rp = new RequestProcessor2 ();
-				rp.OpenConnection("", "IDN CustomerAdd C# sample" );
-				ticket = rp.BeginSession("", QBFileMode.qbFileOpenDoNotCare );
-				response = rp.ProcessRequest(ticket, input);
-					
-			}
-			catch( System.Runtime.InteropServices.COMException ex )
-			{
-				MessageBox.Show( "COM Error Description = " +  ex.Message, "COM error" );
-				return;
-			}
-			finally
-			{
-				if( ticket != null )
-				{
-					rp.EndSession(ticket);
-				}
-				if( rp != null )
-				{
-					rp.CloseConnection();
-				}
-			};
+            if (name.Length == 0)
+            {
+                MessageBox.Show("Please enter a value for Name.", "Input Validation");
+                return;
+            }
 
-			//step4: parse the XML response and show a message
-			XmlDocument outputXMLDoc = new XmlDocument();
-			outputXMLDoc.LoadXml(response);
-			XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName ("CustomerAddRs");
-			
-			if( qbXMLMsgsRsNodeList.Count == 1 ) //it's always true, since we added a single Customer
-			{
-				System.Text.StringBuilder popupMessage = new System.Text.StringBuilder();
+            //step2: create the qbXML request
+            XmlDocument inputXMLDoc = new XmlDocument();
+            inputXMLDoc.AppendChild(inputXMLDoc.CreateXmlDeclaration("1.0", null, null));
+            inputXMLDoc.AppendChild(inputXMLDoc.CreateProcessingInstruction("qbxml", "version=\"2.0\""));
+            XmlElement qbXML = inputXMLDoc.CreateElement("QBXML");
+            inputXMLDoc.AppendChild(qbXML);
+            XmlElement qbXMLMsgsRq = inputXMLDoc.CreateElement("QBXMLMsgsRq");
+            qbXML.AppendChild(qbXMLMsgsRq);
+            qbXMLMsgsRq.SetAttribute("onError", "stopOnError");
+            XmlElement custAddRq = inputXMLDoc.CreateElement("CustomerAddRq");
+            qbXMLMsgsRq.AppendChild(custAddRq);
+            custAddRq.SetAttribute("requestID", "1");
+            XmlElement custAdd = inputXMLDoc.CreateElement("CustomerAdd");
+            custAddRq.AppendChild(custAdd);
+            custAdd.AppendChild(inputXMLDoc.CreateElement("Name")).InnerText = name;
 
-				XmlAttributeCollection rsAttributes = qbXMLMsgsRsNodeList.Item(0).Attributes;
-				//get the status Code, info and Severity
-				string retStatusCode = rsAttributes.GetNamedItem("statusCode").Value; 
-				string retStatusSeverity = rsAttributes.GetNamedItem("statusSeverity").Value;
-				string retStatusMessage = rsAttributes.GetNamedItem("statusMessage").Value;
-                popupMessage.AppendFormat( "statusCode = {0}, statusSeverity = {1}, statusMessage = {2}",
-					retStatusCode, retStatusSeverity, retStatusMessage );
+            if (Phone.Text.Length > 0)
+            {
+                custAdd.AppendChild(inputXMLDoc.CreateElement("Phone")).InnerText = Phone.Text;
+            }
 
-				//get the CustomerRet node for detailed info
-				
-				//a CustomerAddRs contains max one childNode for "CustomerRet"
-				XmlNodeList custAddRsNodeList = qbXMLMsgsRsNodeList.Item(0).ChildNodes;
-				if( custAddRsNodeList.Count == 1 && custAddRsNodeList.Item(0).Name.Equals("CustomerRet") )
-				{
-					XmlNodeList custRetNodeList = custAddRsNodeList.Item(0).ChildNodes ;
-				
-					foreach (XmlNode custRetNode in custRetNodeList )
-					{
-						if ( custRetNode.Name.Equals( "ListID" ) )
-						{
-							popupMessage.AppendFormat("\r\nCustomer ListID = {0}", custRetNode.InnerText  );
-						}
-						else if ( custRetNode.Name.Equals( "Name" ) )
-						{
-							popupMessage.AppendFormat("\r\nCustomer Name = {0}", custRetNode.InnerText );
-						}
-						else if  ( custRetNode.Name.Equals( "FullName" ) )
-						{
-							popupMessage.AppendFormat("\r\nCustomer FullName = {0}", custRetNode.InnerText ); 
-						}
-					}
-				} // End of customerRet
+            string input = inputXMLDoc.OuterXml;
 
-				MessageBox.Show (popupMessage.ToString(), "QuickBooks response");
-			} //End of customerAddRs
+            //step3: do the qbXMLRP request
+            RequestProcessor2 rp = null;
+            string ticket = null;
+            string response = null;
+            try
+            {
+                rp = new RequestProcessor2();
+                rp.OpenConnection("", "Redstone Print and Mail");
+                ticket = rp.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
+                response = rp.ProcessRequest(ticket, input);
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+                MessageBox.Show("COM Error Description = " + ex.Message, "COM error");
+                return;
+            }
+            finally
+            {
+                if (ticket != null)
+                {
+                    rp.EndSession(ticket);
+                }
 
-		}
+                if (rp != null)
+                {
+                    rp.CloseConnection();
+                }
+            }
+
+            ;
+
+            //step4: parse the XML response and show a message
+            XmlDocument outputXMLDoc = new XmlDocument();
+            outputXMLDoc.LoadXml(response);
+            XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("CustomerAddRs");
+            
+            if (qbXMLMsgsRsNodeList.Count == 1) //it's always true, since we added a single Customer
+            {
+                System.Text.StringBuilder popupMessage = new System.Text.StringBuilder();
+
+                XmlAttributeCollection rsAttributes = qbXMLMsgsRsNodeList.Item(0).Attributes;
+                //get the status Code, info and Severity
+                string retStatusCode = rsAttributes.GetNamedItem("statusCode").Value;
+                string retStatusSeverity = rsAttributes.GetNamedItem("statusSeverity").Value;
+                string retStatusMessage = rsAttributes.GetNamedItem("statusMessage").Value;
+                popupMessage.AppendFormat("statusCode = {0}, statusSeverity = {1}, statusMessage = {2}",
+                    retStatusCode, retStatusSeverity, retStatusMessage);
+
+                //-- get the CustomerRet node for detailed info: 
+
+                //a CustomerAddRs contains max one childNode for "CustomerRet"
+                XmlNodeList custAddRsNodeList = qbXMLMsgsRsNodeList.Item(0).ChildNodes;
+                
+                if (custAddRsNodeList.Count == 1 && custAddRsNodeList.Item(0).Name.Equals("CustomerRet"))
+                {
+                    XmlNodeList custRetNodeList = custAddRsNodeList.Item(0).ChildNodes;
+
+                    foreach (XmlNode custRetNode in custRetNodeList)
+                    {
+                        if (custRetNode.Name.Equals("ListID"))
+                        {
+                            popupMessage.AppendFormat("\r\nCustomer ListID = {0}", custRetNode.InnerText);
+                        }
+                        else if (custRetNode.Name.Equals("Name"))
+                        {
+                            popupMessage.AppendFormat("\r\nCustomer Name = {0}", custRetNode.InnerText);
+                        }
+                        else if (custRetNode.Name.Equals("FullName"))
+                        {
+                            popupMessage.AppendFormat("\r\nCustomer FullName = {0}", custRetNode.InnerText);
+                        }
+                    }
+
+                } // End of customerRet
+
+                MessageBox.Show(popupMessage.ToString(), "QuickBooks response");
+
+            } //End of customerAddRs
+        }
 
         private void CustName_TextChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

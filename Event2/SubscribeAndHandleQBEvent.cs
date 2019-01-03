@@ -496,7 +496,42 @@ namespace SubscribeAndHandleQBEvent
 
             try
             {
+                string QBXMLMsgsRq = "QBXMLMsgsRq";
                 
+                // create a .XML file/document
+                XmlDocument inputXMLDocPurchaseOrder = new XmlDocument();
+                
+                // <?xml version="1.0" encoding="utf-8"?>
+                inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", null, null));
+                
+                // <?qbxml version="13.0"?>
+                inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
+
+                // <QBXML>...</QBXML>
+                XmlElement qbXML = inputXMLDocPurchaseOrder.CreateElement("QBXML");
+                inputXMLDocPurchaseOrder.AppendChild(qbXML);
+
+                // <QBXMLMsgsRq onError="stopOnError">...</QBXMLMsgsRq>              
+                XmlElement qbXMLMsgsRq = inputXMLDocPurchaseOrder.CreateElement(QBXMLMsgsRq);
+                qbXML.AppendChild(qbXMLMsgsRq);
+                qbXMLMsgsRq.SetAttribute("onError", "stopOnError"); 
+                
+                //---------------------------------------------------------------------------------------
+                // THIS IS WHERE THE qbXML starts to get unique depending on the API that is being used.
+                //---------------------------------------------------------------------------------------
+                
+                // <PurchaseOrderQueryRq>...</PurchaseOrderQueryRq> 
+                XmlElement purchaseOrderAddRq = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAddRq");
+                qbXML.AppendChild(purchaseOrderAddRq);
+
+                XmlElement purchaseOrderAdd = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAdd");
+                purchaseOrderAddRq.AppendChild(purchaseOrderAdd);
+                purchaseOrderAdd.SetAttribute("defMacro", "MACROTYPE");
+
+                XmlElement vendorRef = inputXMLDocPurchaseOrder.CreateElement("VendorRef");
+                purchaseOrderAdd.AppendChild(vendorRef);
+                vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers"; 
+
             }
             catch(Exception ex)
             {
