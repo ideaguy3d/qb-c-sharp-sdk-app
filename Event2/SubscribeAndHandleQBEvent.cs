@@ -530,8 +530,47 @@ namespace SubscribeAndHandleQBEvent
 
                 XmlElement vendorRef = inputXMLDocPurchaseOrder.CreateElement("VendorRef");
                 purchaseOrderAdd.AppendChild(vendorRef);
-                vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers"; 
+                vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers";
 
+                XmlElement vendorAddress = inputXMLDocPurchaseOrder.CreateElement("VendorAddress");
+                purchaseOrderAdd.AppendChild(vendorAddress);
+                vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText = "123 main st";
+                vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
+                vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "California";
+                vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
+
+                XmlElement dueDate = inputXMLDocPurchaseOrder.CreateElement("DueDate");
+                purchaseOrderAdd.AppendChild(dueDate).InnerText = "Jan.19th 2019";
+
+                string input = inputXMLDocPurchaseOrder.OuterXml; 
+                
+                //-- do the qbXMLRP request
+                RequestProcessor2 rp = null;
+                string ticket = null;
+                string response = null;
+
+                try
+                {
+                    rp = new RequestProcessor2();
+                    rp.OpenConnection("", "Redstone Print and Mail");
+                }
+                catch (System.Runtime.InteropServices.COMException ex)
+                {
+                    Console.WriteLine("");
+                    return;
+                }
+                finally
+                {
+                    if (ticket != null)
+                    {
+                        rp.EndSession(ticket);
+                    }
+
+                    if (rp != null)
+                    {
+                        rp.CloseConnection();
+                    }
+                }
             }
             catch(Exception ex)
             {

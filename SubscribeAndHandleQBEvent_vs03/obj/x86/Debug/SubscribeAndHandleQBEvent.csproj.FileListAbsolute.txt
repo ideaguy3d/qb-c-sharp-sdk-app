@@ -1,9 +1,0 @@
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\bin\x86\Debug\SubscribeAndHandleQBEvent.exe
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\bin\x86\Debug\SubscribeAndHandleQBEvent.pdb
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\bin\x86\Debug\Interop.QBSDKEVENTLib.dll
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\obj\x86\Debug\SubscribeAndHandleQBEvent.csprojAssemblyReference.cache
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\obj\x86\Debug\Interop.QBSDKEVENTLib.dll
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\obj\x86\Debug\SubscribeAndHandleQBEvent.csproj.ResolveComReference.cache
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\obj\x86\Debug\SubscribeAndHandleQBEvent.csproj.CoreCompileInputs.cache
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\obj\x86\Debug\SubscribeAndHandleQBEvent.exe
-C:\Users\julius\Desktop\QuickBooks_SDK\SubscribeAndHandleQBEvent_vs03\obj\x86\Debug\SubscribeAndHandleQBEvent.pdb
