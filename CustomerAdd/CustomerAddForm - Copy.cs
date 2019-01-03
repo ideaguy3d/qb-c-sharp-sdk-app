@@ -27,7 +27,7 @@ namespace CustomerAdd
     /// CustomerAddForm shows how to invoke QuickBooks qbXMLRP COM object
     /// It uses .NET to create qbXML request and parse qbXML response
     /// </summary>
-    public class CustomerAddForm : System.Windows.Forms.Form
+    public class CustomerAddForm_Copy : System.Windows.Forms.Form
     {
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button Exit;
@@ -215,26 +215,39 @@ namespace CustomerAdd
                 custAdd.AppendChild(inputXMLDoc.CreateElement("Phone")).InnerText = Phone.Text;
             }
 
-            //-- this is the xml string variable that will literally get sent to QBXMLRP2 
             string input = inputXMLDoc.OuterXml;
 
-            //-- step3: do the qbXMLRP request
-            RequestProcessor2 rp = rp = new RequestProcessor2();
-            rp.OpenConnection("", "Redstone Print and Mail");
-            string ticket = rp.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
-            string response = rp.ProcessRequest(ticket, input);
-            
-            if (ticket != null)
+            //step3: do the qbXMLRP request
+            RequestProcessor2 rp = null;
+            string ticket = null;
+            string response = null;
+            try
+            { 
+                // ... move this try block out 
+                rp = new RequestProcessor2();
+                rp.OpenConnection("", "Redstone Print and Mail");
+                ticket = rp.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
+                response = rp.ProcessRequest(ticket, input);
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
             {
-                rp.EndSession(ticket);
+                MessageBox.Show("COM Error Description = " + ex.Message, "COM error");
+                return;
+            }
+            finally
+            {
+                if (ticket != null)
+                {
+                    rp.EndSession(ticket);
+                }
+
+                if (rp != null)
+                {
+                    rp.CloseConnection();
+                }
             }
 
-            if (rp != null)
-            {
-                rp.CloseConnection();
-            }
-
-            //step4: parse the XML response and show a message
+            //-- step4: parse the XML response and show a message
             XmlDocument outputXMLDoc = new XmlDocument();
             outputXMLDoc.LoadXml(response);
             XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("CustomerAddRs");

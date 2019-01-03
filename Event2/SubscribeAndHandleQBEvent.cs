@@ -1,17 +1,17 @@
-using System;                               // 1
-using System.Net;                           // 2
-using System.Collections;                   // 3
-using System.ComponentModel;                // 4
-using System.Data;                          // 5
-using System.Drawing;                       // 6
-using System.IO;                            // 7
-using System.Runtime.InteropServices;       // 8
-using System.Text;                          // 9
-using System.Threading;                     // 10
-using System.Windows.Forms;                 // 11
-using System.Xml;                           // 12
-using Interop.QBXMLRP2;                     // 13
-using Microsoft.Win32;                      // 14
+using System; // 1
+using System.Net; // 2
+using System.Collections; // 3
+using System.ComponentModel; // 4
+using System.Data; // 5
+using System.Drawing; // 6
+using System.IO; // 7
+using System.Runtime.InteropServices; // 8
+using System.Text; // 9
+using System.Threading; // 10
+using System.Windows.Forms; // 11
+using System.Xml; // 12
+using Interop.QBXMLRP2; // 13
+using Microsoft.Win32; // 14
 
 namespace SubscribeAndHandleQBEvent
 {
@@ -423,7 +423,7 @@ namespace SubscribeAndHandleQBEvent
         }
 
 
-        /*******************************************/ 
+        /*******************************************/
         /***** The more important functions!! ******/
         /*******************************************/
 
@@ -497,15 +497,16 @@ namespace SubscribeAndHandleQBEvent
             try
             {
                 string QBXMLMsgsRq = "QBXMLMsgsRq";
-                
+
                 // create a .XML file/document
                 XmlDocument inputXMLDocPurchaseOrder = new XmlDocument();
-                
+
                 // <?xml version="1.0" encoding="utf-8"?>
                 inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", null, null));
-                
+
                 // <?qbxml version="13.0"?>
-                inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
+                inputXMLDocPurchaseOrder.AppendChild(
+                    inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
 
                 // <QBXML>...</QBXML>
                 XmlElement qbXML = inputXMLDocPurchaseOrder.CreateElement("QBXML");
@@ -514,19 +515,19 @@ namespace SubscribeAndHandleQBEvent
                 // <QBXMLMsgsRq onError="stopOnError">...</QBXMLMsgsRq>              
                 XmlElement qbXMLMsgsRq = inputXMLDocPurchaseOrder.CreateElement(QBXMLMsgsRq);
                 qbXML.AppendChild(qbXMLMsgsRq);
-                qbXMLMsgsRq.SetAttribute("onError", "stopOnError"); 
-                
+                qbXMLMsgsRq.SetAttribute("onError", "stopOnError");
+
                 //---------------------------------------------------------------------------------------
                 // THIS IS WHERE THE qbXML starts to get unique depending on the API that is being used.
                 //---------------------------------------------------------------------------------------
-                
+
                 // <PurchaseOrderQueryRq>...</PurchaseOrderQueryRq> 
                 XmlElement purchaseOrderAddRq = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAddRq");
                 qbXML.AppendChild(purchaseOrderAddRq);
 
                 XmlElement purchaseOrderAdd = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAdd");
                 purchaseOrderAddRq.AppendChild(purchaseOrderAdd);
-                purchaseOrderAdd.SetAttribute("defMacro", "MACROTYPE");
+                purchaseOrderAdd.SetAttribute("defMacro", "TxnID:JuliusPrac0001");
 
                 XmlElement vendorRef = inputXMLDocPurchaseOrder.CreateElement("VendorRef");
                 purchaseOrderAdd.AppendChild(vendorRef);
@@ -542,8 +543,9 @@ namespace SubscribeAndHandleQBEvent
                 XmlElement dueDate = inputXMLDocPurchaseOrder.CreateElement("DueDate");
                 purchaseOrderAdd.AppendChild(dueDate).InnerText = "Jan.19th 2019";
 
-                string input = inputXMLDocPurchaseOrder.OuterXml; 
-                
+                // the XML string being sent to QBXMLRP2
+                string input = inputXMLDocPurchaseOrder.OuterXml;
+
                 //-- do the qbXMLRP request
                 RequestProcessor2 rp = null;
                 string ticket = null;
@@ -553,10 +555,12 @@ namespace SubscribeAndHandleQBEvent
                 {
                     rp = new RequestProcessor2();
                     rp.OpenConnection("", "Redstone Print and Mail");
+                    ticket = rp.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
+                    response = rp.ProcessRequest(ticket, input);
                 }
                 catch (System.Runtime.InteropServices.COMException ex)
                 {
-                    Console.WriteLine("");
+                    Console.WriteLine("JHA - COM Error Description = " + ex.Message, "COM error");
                     return;
                 }
                 finally
@@ -571,12 +575,36 @@ namespace SubscribeAndHandleQBEvent
                         rp.CloseConnection();
                     }
                 }
-            }
-            catch(Exception ex)
-            {
 
+                XmlDocument outputXMLDocPurchaseOrderAdd = new XmlDocument();
+                outputXMLDocPurchaseOrderAdd.LoadXml(response);
+                XmlNodeList qbXmlMsgsRsNodeList =
+                    outputXMLDocPurchaseOrderAdd.GetElementsByTagName("PurchaseOrderAddRs");
+
+                if (qbXmlMsgsRsNodeList.Count == 1)
+                {
+                    System.Text.StringBuilder txtMessage = new System.Text.StringBuilder();
+
+                    XmlAttributeCollection rsAttributes = qbXmlMsgsRsNodeList.Item(0).Attributes;
+                    // get statusCode, statusSeverity, statusMessage
+                    string statusCode = rsAttributes.GetNamedItem("statusCode").Value;
+                    string statusSeverity = rsAttributes.GetNamedItem("statusSeverity").Value;
+                    string statusMessage = rsAttributes.GetNamedItem("statusMessage").Value;
+                    txtMessage.AppendFormat(
+                        "statusCode = {0}, statusSeverity = {1}, statusMessage = {2}",
+                        statusCode, statusSeverity, statusMessage
+                    );
+                    
+                    // get PurchaseOrderAddRs > PurchaseOrderRet node
+                    XmlNodeList purchaseOrderAddRsNodeList = qbXmlMsgsRsNodeList.Item(0).ChildNodes; 
+                    
+                }
             }
-            
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "JHA - Error while making a purchase_order_add request, error message = " + ex.Message);
+            }
         } // END OF: SubscribeForEvents () {}
 
         // Unsubscribes this application from listening to add/modify/delete custmor event
@@ -621,7 +649,6 @@ namespace SubscribeAndHandleQBEvent
             }
 
             return;
-            
         } // END OF: UnsubscribeForEvents 
 
         // This Method returns the qbXML for Subscribing this application to QB for listening 
@@ -680,7 +707,6 @@ namespace SubscribeAndHandleQBEvent
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\DataEvent.xml", strRetString);
             return strRetString;
-            
         } // END OF: GetDataEventSubscriptionAddXML(){}
 
         // This Method returns the qbXML for the Adding a UI extension to the customer menu.
@@ -741,9 +767,8 @@ namespace SubscribeAndHandleQBEvent
 
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\UIExtension.xml", strRetString);
-            
+
             return strRetString;
-            
         } // END OF: GetUIExtensionSubscriptionAddXML(){}
 
         // This Method returns the qbXML for deleting the event subscription 
@@ -777,7 +802,6 @@ namespace SubscribeAndHandleQBEvent
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\Unsubscribe.xml", strRetString);
             return strRetString;
-
         } // END OF: GetSubscriptionDeleteXML(){}
 
         // Used only for debug purpose
@@ -790,10 +814,17 @@ namespace SubscribeAndHandleQBEvent
             sw.Close();
         }
 
+        private static void LogTxtData(string filePath, string strTxt)
+        {
+            StreamWriter sw = new StreamWriter(filePath);
+            sw.WriteLine(strTxt);
+            sw.Flush();
+            sw.Close();
+        }
+
         /*****************************/
         /******** Custom Code ********/
         /*****************************/
-        
 
 
         /// <summary>
@@ -815,7 +846,7 @@ namespace SubscribeAndHandleQBEvent
                 m_iObjsInUse = 0;
                 m_iServerLocks = 0;
                 m_uiMainThreadId = GetCurrentThreadId();
-                
+
                 // Register the EventHandlerObjClassFactory.
                 EventHandlerObjClassFactory factory = new EventHandlerObjClassFactory();
                 factory.ClassContext = (uint) CLSCTX.CLSCTX_LOCAL_SERVER;
