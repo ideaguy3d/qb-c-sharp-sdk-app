@@ -824,6 +824,7 @@ namespace SubscribeAndHandleQBEvent
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\Unsubscribe.xml", strRetString);
             return strRetString;
+            
         } // END OF: GetSubscriptionDeleteXML(){}
 
         // Used only for debug purpose
@@ -838,8 +839,9 @@ namespace SubscribeAndHandleQBEvent
 
         private static void LogTxtData(string filePath, StringBuilder strTxt)
         {
+            string info = strTxt.ToString(); 
             StreamWriter sw = new StreamWriter(filePath);
-            sw.WriteLine(strTxt);
+            sw.WriteLine(info);
             sw.Flush();
             sw.Close();
         }

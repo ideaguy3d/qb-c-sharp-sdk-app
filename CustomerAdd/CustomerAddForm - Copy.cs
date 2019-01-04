@@ -252,7 +252,7 @@ namespace CustomerAdd
             outputXMLDoc.LoadXml(response);
             XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("CustomerAddRs");
             
-            if (qbXMLMsgsRsNodeList.Count == 1) //it's always true, since we added a single Customer
+            if (qbXMLMsgsRsNodeList.Count == 1) // it's always true, since we added a single Customer
             {
                 System.Text.StringBuilder popupMessage = new System.Text.StringBuilder();
 
@@ -289,7 +289,7 @@ namespace CustomerAdd
                         }
                     }
 
-                } // End of customerRet
+                } // END OF: if (qbXMLMsgsRsNodeList.Count == 1) {}
 
                 MessageBox.Show(popupMessage.ToString(), "QuickBooks response");
 
