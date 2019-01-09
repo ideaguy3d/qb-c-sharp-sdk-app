@@ -248,7 +248,7 @@ namespace SubscribeAndHandleQBEvent
                         {
                             // upcast to more specific type here, this is safe because we checked with response.
                             // Type check above
-                            IPurchaseOrderRetList PurchaseOrderRet = (IPurchaseOrderRetList)response.Detail;
+                            IPurchaseOrderRet PurchaseOrderRet = (IPurchaseOrderRet)response.Detail;
                             WalkPurchaseOrderRet(PurchaseOrderRet);
                         }
                     }
@@ -257,7 +257,7 @@ namespace SubscribeAndHandleQBEvent
         }
 
         //-- 4 / 4 function, MAIN FUNCTION... I think. 
-        private void WalkPurchaseOrderRet(IPurchaseOrderRetList PurchaseOrderRet)
+        private void WalkPurchaseOrderRet(IPurchaseOrderRet PurchaseOrderRet)
         {
             if (PurchaseOrderRet == null) return;
             //Go through all the elements of IPurchaseOrderRetList
@@ -568,10 +568,10 @@ namespace SubscribeAndHandleQBEvent
                 }
             }
             //Get value of ExchangeRate
-            if (PurchaseOrderRet.ExchangeRate != null)
-            {
-                IQBFloatType ExchangeRate18267 = (IQBFloatType)PurchaseOrderRet.ExchangeRate.GetValue();
-            }
+//            if (PurchaseOrderRet.ExchangeRate != null)
+//            {
+//                IQBFloatType ExchangeRate18267 = (IQBFloatType)PurchaseOrderRet.ExchangeRate.GetValue();
+//            }
             //Get value of TotalAmountInHomeCurrency
             if (PurchaseOrderRet.TotalAmountInHomeCurrency != null)
             {

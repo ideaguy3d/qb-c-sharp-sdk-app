@@ -438,7 +438,7 @@ namespace SubscribeAndHandleQBEvent
             string ticket = null;
             string response = null;
             StringBuilder input = null;
-            string strResponse = null; 
+            string strResponse = null;
 
             try
             {
@@ -446,7 +446,7 @@ namespace SubscribeAndHandleQBEvent
                 // call OpenConnection if that has not been done already.
                 qbRequestProcessor = new RequestProcessor2Class();
                 qbRequestProcessor.OpenConnection("", strAppName);
-                ticket = qbRequestProcessor.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
+                ticket = qbRequestProcessor.BeginSession("Redstone .qbw", QBFileMode.qbFileOpenDoNotCare);
 
                 StringBuilder strRequest = new StringBuilder();
 
@@ -468,41 +468,51 @@ namespace SubscribeAndHandleQBEvent
                 //-------------------------------------
                 // send the QBXMLRP2 a Process request 
                 //-------------------------------------
-                strResponse = qbRequestProcessor.ProcessSubscription(strRequest.ToString());
+                response = qbRequestProcessor.ProcessRequest(ticket, input.ToString());
 
                 //-------------------------------------
                 // send the QBXMLRP2 a Process request 
                 //-------------------------------------
-                response = qbRequestProcessor.ProcessRequest(ticket, input.ToString());
+                strResponse = qbRequestProcessor.ProcessSubscription(strRequest.ToString());
 
 
                 //-- Parse the XML response to check the status
-
-                XmlDocument outputXMLDoc = new XmlDocument();
-                outputXMLDoc.LoadXml(strResponse);
-                XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("DataEventSubscriptionAddRs");
-                if (qbXMLMsgsRsNodeList.Count == 1)
+                try
                 {
-                    XmlAttributeCollection rsAttributes = qbXMLMsgsRsNodeList.Item(0).Attributes;
-
-                    // get the status Code, info and Severity
-                    string retStatusCode = rsAttributes.GetNamedItem("statusCode").Value;
-                    string retStatusSeverity = rsAttributes.GetNamedItem("statusSeverity").Value;
-                    string retStatusMessage = rsAttributes.GetNamedItem("statusMessage").Value;
-
-                    // 3180 : if subscription already subscribed. NOT A NEAT WAY TO DO THIS, NEED TO EXPLORE THIS
-                    if ((retStatusCode != "0") && (retStatusCode != "3180"))
+                    XmlDocument outputXMLDoc = new XmlDocument();
+                    outputXMLDoc.LoadXml(strResponse);
+                    XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("DataEventSubscriptionAddRs");
+                    if (qbXMLMsgsRsNodeList.Count == 1)
                     {
-                        Console.WriteLine(
-                            "Error while subscribing for events\n\terror Code - {0},\n\tSeverity - {1},\n\tError Message - {2}\n",
-                            retStatusCode, retStatusSeverity, retStatusMessage);
-                        return;
+                        XmlAttributeCollection rsAttributes = qbXMLMsgsRsNodeList.Item(0).Attributes;
+
+                        // get the status Code, info and Severity
+                        string retStatusCode = rsAttributes.GetNamedItem("statusCode").Value;
+                        string retStatusSeverity = rsAttributes.GetNamedItem("statusSeverity").Value;
+                        string retStatusMessage = rsAttributes.GetNamedItem("statusMessage").Value;
+
+                        // 3180 : if subscription already subscribed. NOT A NEAT WAY TO DO THIS, NEED TO EXPLORE THIS
+                        if ((retStatusCode != "0") && (retStatusCode != "3180"))
+                        {
+                            Console.WriteLine(
+                                "Error while subscribing for events\n\terror Code - {0},\n\tSeverity - {1},\n\tError Message - {2}\n",
+                                retStatusCode, retStatusSeverity, retStatusMessage);
+                            return;
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("JHA - Error while parsing the xml response - " + ex.Message);
+                    qbRequestProcessor = null;
+                    return;
+                }
+
 
                 XmlDocument outputXMLDocPurchaseOrderAdd = new XmlDocument();
                 outputXMLDocPurchaseOrderAdd.LoadXml(response);
-                XmlNodeList qbXmlMsgsRsNodeList = outputXMLDocPurchaseOrderAdd.GetElementsByTagName("PurchaseOrderAddRs");
+                XmlNodeList qbXmlMsgsRsNodeList =
+                    outputXMLDocPurchaseOrderAdd.GetElementsByTagName("PurchaseOrderAddRs");
 
                 if (qbXmlMsgsRsNodeList.Count == 1)
                 {
@@ -547,11 +557,10 @@ namespace SubscribeAndHandleQBEvent
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error while registering for QB events - " + ex.Message);
+                Console.WriteLine("JHA - Error while registering for QB events - " + ex.Message);
                 qbRequestProcessor = null;
                 return;
             }
-
         } // END OF: SubscribeForEvents () {}
 
         // Unsubscribes this application from listening to add/modify/delete custmor event
@@ -596,7 +605,6 @@ namespace SubscribeAndHandleQBEvent
             }
 
             return;
-
         } // END OF: UnsubscribeForEvents 
 
         // This Method returns the qbXML for Subscribing this application to QB for listening 
@@ -612,11 +620,13 @@ namespace SubscribeAndHandleQBEvent
             // <?qbxml version="5.0"?> 
             requestXMLDoc.AppendChild(requestXMLDoc.CreateProcessingInstruction("qbxml", "version=\"5.0\""));
 
+            // <QBXML>...</QBXML>
             XmlElement qbXML = requestXMLDoc.CreateElement("QBXML");
-
             requestXMLDoc.AppendChild(qbXML);
 
-            // Subscription Message request
+            //--------------------------------------------------------------------------
+            // Subscription Message request, <QBXMLSubscriptionMsgsRq>...</QBXMLMsgsRq>  
+            //--------------------------------------------------------------------------
             XmlElement qbXMLMsgsRq = requestXMLDoc.CreateElement("QBXMLSubscriptionMsgsRq");
             qbXML.AppendChild(qbXMLMsgsRq);
 
@@ -662,12 +672,10 @@ namespace SubscribeAndHandleQBEvent
             LogXmlData(@"C:\Temp\DataEvent.xml", strRetString);
 
             return strRetString;
-
         } // END OF: GetDataEventSubscriptionAddXML(){}
 
         private static string PurchaseOrderAddAddXml()
         {
-
             // create a .XML file/document
             XmlDocument inputXMLDocPurchaseOrder = new XmlDocument();
 
@@ -675,7 +683,8 @@ namespace SubscribeAndHandleQBEvent
             inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", null, null));
 
             // <?qbxml version="13.0"?>
-            inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"5.0\""));
+            inputXMLDocPurchaseOrder.AppendChild(
+                inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"5.0\""));
 
             // <QBXML>...</QBXML>
             XmlElement qbXML = inputXMLDocPurchaseOrder.CreateElement("QBXML");
@@ -716,8 +725,7 @@ namespace SubscribeAndHandleQBEvent
 
             LogTxtData(@"C:\Temp\DataEvent.xml", strRetString);
 
-            return strRetString;  
-
+            return strRetString;
         } // END OF PurchaseOrderAddAddXml() {}
 
         // This Method returns the qbXML for the Adding a UI extension to the customer menu.
@@ -813,7 +821,6 @@ namespace SubscribeAndHandleQBEvent
             string strRetString = requestXMLDoc.OuterXml;
             LogXmlData(@"C:\Temp\Unsubscribe.xml", strRetString);
             return strRetString;
-
         } // END OF: GetSubscriptionDeleteXML() {}
 
         // Used only for debug purpose
