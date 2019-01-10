@@ -31,8 +31,8 @@ namespace CustomerAdd
     /// </summary>
     public class CustomerAddForm
     {
-        private string logLocation = @"C:\Temp\PurchaseOrderAddRequest.xml"; 
-        
+        private string logLocation = @"C:\Temp\PurchaseOrderAddRequest.xml";
+
         private void AddCustomer_Click(object sender, System.EventArgs e)
         {
             //-------------------------------------
@@ -41,17 +41,30 @@ namespace CustomerAdd
             // step2: create the qbXML request
             //-------------------------------------
             //-------------------------------------
+
+            //-- create the XML doc/file
             XmlDocument inputXMLDoc = new XmlDocument();
+
+            //-- <?xml version="1.0" encoding="utf-8"?>
             inputXMLDoc.AppendChild(inputXMLDoc.CreateXmlDeclaration("1.0", null, null));
+
+            //-- <?qbxml version="13.0"?>
             inputXMLDoc.AppendChild(inputXMLDoc.CreateProcessingInstruction("qbxml", "version=\"2.0\""));
 
+            //-- <QBXML>...</QBXML>
             XmlElement qbXML = inputXMLDoc.CreateElement("QBXML");
             inputXMLDoc.AppendChild(qbXML);
 
+            //-- <QBXMLMsgsRq onError="stopOnError">...</QBXMLMsgsRq>  
             XmlElement qbXMLMsgsRq = inputXMLDoc.CreateElement("QBXMLMsgsRq");
             qbXML.AppendChild(qbXMLMsgsRq);
             qbXMLMsgsRq.SetAttribute("onError", "stopOnError");
 
+            //---------------------------------------------------------------------------------------
+            // THIS IS WHERE THE qbXML starts to get unique depending on the API that is being used.
+            //---------------------------------------------------------------------------------------
+
+            //-- <CustomerAddRq>...</CustomerAddRq>
             XmlElement custAddRq = inputXMLDoc.CreateElement("CustomerAddRq");
             qbXMLMsgsRq.AppendChild(custAddRq);
             custAddRq.SetAttribute("requestID", "1");
@@ -133,11 +146,10 @@ namespace CustomerAdd
             XmlDocument inputXMLDocPurchaseOrder = new XmlDocument();
 
             // <?xml version="1.0" encoding="utf-8"?>
-            inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", null, null));
+            inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", "utf-8", null));
 
-            // <?qbxml version="13.0"?>
-            inputXMLDocPurchaseOrder.AppendChild(
-                inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"5.0\""));
+            // <?qbxml version="2.0"?>
+            inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"2.0\""));
 
             // <QBXML>...</QBXML>
             XmlElement qbXML = inputXMLDocPurchaseOrder.CreateElement("QBXML");
@@ -154,25 +166,27 @@ namespace CustomerAdd
 
             // <PurchaseOrderQueryRq>...</PurchaseOrderQueryRq> 
             XmlElement purchaseOrderAddRq = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAddRq");
-            qbXML.AppendChild(purchaseOrderAddRq);
+            qbXMLMsgsRq.AppendChild(purchaseOrderAddRq);
 
             XmlElement purchaseOrderAdd = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAdd");
             purchaseOrderAddRq.AppendChild(purchaseOrderAdd);
-            purchaseOrderAdd.SetAttribute("defMacro", "TxnID:JuliusPrac0001");
+            purchaseOrderAdd.SetAttribute("defMacro", "TxnID:0001");  // 
 
+            // <VendorRef>...</VendorRef>
             XmlElement vendorRef = inputXMLDocPurchaseOrder.CreateElement("VendorRef");
             purchaseOrderAdd.AppendChild(vendorRef);
-            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers";
+            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("ListID")).InnerText = "0001";
+            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers LLC";
 
-            XmlElement vendorAddress = inputXMLDocPurchaseOrder.CreateElement("VendorAddress");
-            purchaseOrderAdd.AppendChild(vendorAddress);
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText = "123 main st";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "California";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
-
-            XmlElement dueDate = inputXMLDocPurchaseOrder.CreateElement("DueDate");
-            purchaseOrderAdd.AppendChild(dueDate).InnerText = "Jan.19th 2019";
+//            XmlElement vendorAddress = inputXMLDocPurchaseOrder.CreateElement("VendorAddress");
+//            purchaseOrderAdd.AppendChild(vendorAddress);
+//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText = "123 main st";
+//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
+//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "California";
+//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
+            
+//            XmlElement dueDate = inputXMLDocPurchaseOrder.CreateElement("DueDate");
+//            purchaseOrderAdd.AppendChild(dueDate).InnerText = "Jan.19th 2019";
 
             string strRetString = inputXMLDocPurchaseOrder.OuterXml;
 
@@ -207,15 +221,23 @@ namespace CustomerAdd
 
             try // to add a purchase order
             {
+                //-- do the qbXMLRP request
                 qbRequestProcessor = new RequestProcessor2();
                 qbRequestProcessor.OpenConnection("", "Redstone Print and Mail Data Engineering");
                 ticket = qbRequestProcessor.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
-                purchaseOrderInput = PurchaseOrderAddAddXml();
-                purchaseOrderResponse = qbRequestProcessor.ProcessRequest(ticket, purchaseOrderInput.ToString());
+                purchaseOrderInput = PurchaseOrderAddAddXml(); 
+                
+                purchaseOrderResponse = qbRequestProcessor.ProcessRequest(ticket, purchaseOrderInput);
+
+                if (ticket != null)
+                {
+                    qbRequestProcessor.EndSession(ticket);
+                }
+
+                qbRequestProcessor.CloseConnection();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("JHA - Error while doing purchaseOrderAdd: " + ex.Message);
                 qbRequestProcessor = null;
                 LogTxtData(@"C:\Temp\PurchaseOrderAddRequestError.xml", ex.Message);
                 return;
