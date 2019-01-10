@@ -475,7 +475,6 @@ namespace SubscribeAndHandleQBEvent
                 //-------------------------------------
                 strResponse = qbRequestProcessor.ProcessSubscription(strRequest.ToString());
 
-
                 //-- Parse the XML response to check the status
                 try
                 {
@@ -485,7 +484,7 @@ namespace SubscribeAndHandleQBEvent
                     if (qbXMLMsgsRsNodeList.Count == 1)
                     {
                         XmlAttributeCollection rsAttributes = qbXMLMsgsRsNodeList.Item(0).Attributes;
-
+                        
                         // get the status Code, info and Severity
                         string retStatusCode = rsAttributes.GetNamedItem("statusCode").Value;
                         string retStatusSeverity = rsAttributes.GetNamedItem("statusSeverity").Value;
@@ -508,7 +507,6 @@ namespace SubscribeAndHandleQBEvent
                     return;
                 }
 
-
                 XmlDocument outputXMLDocPurchaseOrderAdd = new XmlDocument();
                 outputXMLDocPurchaseOrderAdd.LoadXml(response);
                 XmlNodeList qbXmlMsgsRsNodeList =
@@ -516,7 +514,7 @@ namespace SubscribeAndHandleQBEvent
 
                 if (qbXmlMsgsRsNodeList.Count == 1)
                 {
-                    System.Text.StringBuilder txtMessage = new System.Text.StringBuilder();
+                    StringBuilder txtMessage = new StringBuilder();
 
                     XmlAttributeCollection rsAttributes = qbXmlMsgsRsNodeList.Item(0).Attributes;
                     // get statusCode, statusSeverity, statusMessage
@@ -605,7 +603,7 @@ namespace SubscribeAndHandleQBEvent
             }
 
             return;
-        } // END OF: UnsubscribeForEvents 
+        } // END OF: UnsubscribeForEvents () {} 
 
         // This Method returns the qbXML for Subscribing this application to QB for listening 
         // to customer add/modify/delete event.
