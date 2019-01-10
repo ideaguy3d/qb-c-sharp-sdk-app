@@ -221,19 +221,33 @@ namespace CustomerAdd
             XmlElement expectedDate = inputXMLDocPurchaseOrder.CreateElement("ExpectedDate");
             purchaseOrderAdd.AppendChild(expectedDate);
             expectedDate.InnerText = "2019-01-19";
-            
+
             // <IsToBePrinted>...</IsToBePrinted>
             XmlElement isToBePrinted = inputXMLDocPurchaseOrder.CreateElement("IsToBePrinted");
             purchaseOrderAdd.AppendChild(isToBePrinted);
             isToBePrinted.InnerText = "false";
-            
+
             // <IsToBeEmailed>...</IsToBeEmailed>
             XmlElement isToBeEmailed = inputXMLDocPurchaseOrder.CreateElement("IsToBeEmailed");
             purchaseOrderAdd.AppendChild(isToBeEmailed);
-            isToBeEmailed.InnerText = "false"; 
+            isToBeEmailed.InnerText = "false";
 
+            // <PurchaseOrderLineAdd>...</PurchaseOrderLineAdd>
+            XmlElement purchaseOrderLineAdd = inputXMLDocPurchaseOrder.CreateElement("purchaseOrderLineAdd");
+            purchaseOrderAdd.AppendChild(purchaseOrderLineAdd);
+            // // construct <ItemRef><FullName>Some name</FullName></ItemRef>
+            XmlElement itemRef = inputXMLDocPurchaseOrder.CreateElement("ItemRef");
+            itemRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Rope and Concrete";
+            purchaseOrderLineAdd.AppendChild(itemRef);
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Desc")).InnerText =
+                "Vinyl Irrigation LineParent Item - Do Not Purchase or Sell";
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Quantity")).InnerText = "70";
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("UnitOfMeasure")).InnerText =
+                "foot";
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Rate")).InnerText = "10.00";
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Amount")).InnerText = "7000.00";
+    
             string strRetString = inputXMLDocPurchaseOrder.OuterXml;
-
             LogTxtData(@"C:\Temp\PurchaseOrderAddRequest.xml", strRetString);
 
             return strRetString;
