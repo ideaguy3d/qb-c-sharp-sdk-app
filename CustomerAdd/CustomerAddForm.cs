@@ -138,7 +138,7 @@ namespace CustomerAdd
                     }
                 } // End of customerRet
             } //End of customerAddRs
-        }
+        } // END OF: AddCustomer_Click() {}
 
         private static string PurchaseOrderAddAddXml()
         {
@@ -149,7 +149,8 @@ namespace CustomerAdd
             inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", "utf-8", null));
 
             // <?qbxml version="2.0"?>
-            inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"2.0\""));
+            inputXMLDocPurchaseOrder.AppendChild(
+                inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
 
             // <QBXML>...</QBXML>
             XmlElement qbXML = inputXMLDocPurchaseOrder.CreateElement("QBXML");
@@ -168,9 +169,10 @@ namespace CustomerAdd
             XmlElement purchaseOrderAddRq = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAddRq");
             qbXMLMsgsRq.AppendChild(purchaseOrderAddRq);
 
+            // <PurchaseOrderAdd>...</PurchaseOrderAdd>
             XmlElement purchaseOrderAdd = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderAdd");
             purchaseOrderAddRq.AppendChild(purchaseOrderAdd);
-            purchaseOrderAdd.SetAttribute("defMacro", "TxnID:0001");  // 
+            //purchaseOrderAdd.SetAttribute("defMacro", "TxnID:0001");// 
 
             // <VendorRef>...</VendorRef>
             XmlElement vendorRef = inputXMLDocPurchaseOrder.CreateElement("VendorRef");
@@ -178,15 +180,57 @@ namespace CustomerAdd
             vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("ListID")).InnerText = "0001";
             vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers LLC";
 
-//            XmlElement vendorAddress = inputXMLDocPurchaseOrder.CreateElement("VendorAddress");
-//            purchaseOrderAdd.AppendChild(vendorAddress);
-//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText = "123 main st";
-//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
-//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "California";
-//            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
+            // <TxnDate>...</TxnDate>
+            XmlElement txnDate = inputXMLDocPurchaseOrder.CreateElement("TxnDate");
+            purchaseOrderAdd.AppendChild(txnDate);
+            txnDate.InnerText = "2019-1-10";
+
+            // <RefNumber>...</RefNumber>
+            XmlElement refNumber = inputXMLDocPurchaseOrder.CreateElement("RefNumber");
+            purchaseOrderAdd.AppendChild(refNumber);
+            refNumber.InnerText = "777";
+
+            // <VendorAddress>...</VendorAddress>
+            XmlElement vendorAddress = inputXMLDocPurchaseOrder.CreateElement("VendorAddress");
+            purchaseOrderAdd.AppendChild(vendorAddress);
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText =
+                "Jeff Miller Landscaping";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jeff Miller";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "123 main st";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "CA";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
+
+            // <ShipAddress>...</ShipAddress>
+            XmlElement shipAddress = inputXMLDocPurchaseOrder.CreateElement("ShipAddress");
+            purchaseOrderAdd.AppendChild(shipAddress);
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText =
+                "Jeff Miller Landscaping";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jeff Miller";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "123 main st";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "CA";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
+
+            // <DueDate>...</DueDate>
+            XmlElement dueDate = inputXMLDocPurchaseOrder.CreateElement("DueDate");
+            purchaseOrderAdd.AppendChild(dueDate);
+            dueDate.InnerText = "2019-01-19";
+
+            // <ExpectedDate>...</ExpectedDate>
+            XmlElement expectedDate = inputXMLDocPurchaseOrder.CreateElement("ExpectedDate");
+            purchaseOrderAdd.AppendChild(expectedDate);
+            expectedDate.InnerText = "2019-01-19";
             
-//            XmlElement dueDate = inputXMLDocPurchaseOrder.CreateElement("DueDate");
-//            purchaseOrderAdd.AppendChild(dueDate).InnerText = "Jan.19th 2019";
+            // <IsToBePrinted>...</IsToBePrinted>
+            XmlElement isToBePrinted = inputXMLDocPurchaseOrder.CreateElement("IsToBePrinted");
+            purchaseOrderAdd.AppendChild(isToBePrinted);
+            isToBePrinted.InnerText = "false";
+            
+            // <IsToBeEmailed>...</IsToBeEmailed>
+            XmlElement isToBeEmailed = inputXMLDocPurchaseOrder.CreateElement("IsToBeEmailed");
+            purchaseOrderAdd.AppendChild(isToBeEmailed);
+            isToBeEmailed.InnerText = "false"; 
 
             string strRetString = inputXMLDocPurchaseOrder.OuterXml;
 
@@ -225,8 +269,8 @@ namespace CustomerAdd
                 qbRequestProcessor = new RequestProcessor2();
                 qbRequestProcessor.OpenConnection("", "Redstone Print and Mail Data Engineering");
                 ticket = qbRequestProcessor.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
-                purchaseOrderInput = PurchaseOrderAddAddXml(); 
-                
+                purchaseOrderInput = PurchaseOrderAddAddXml();
+
                 purchaseOrderResponse = qbRequestProcessor.ProcessRequest(ticket, purchaseOrderInput);
 
                 if (ticket != null)
