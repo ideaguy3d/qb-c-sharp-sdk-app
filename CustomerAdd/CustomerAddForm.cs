@@ -95,6 +95,7 @@ namespace CustomerAdd
                 rp.CloseConnection();
             }
 
+            //------------------------------------------------
             //step4: parse the XML response and show a message
             XmlDocument outputXMLDoc = new XmlDocument();
             outputXMLDoc.LoadXml(response);
@@ -177,13 +178,13 @@ namespace CustomerAdd
             // <VendorRef>...</VendorRef>
             XmlElement vendorRef = inputXMLDocPurchaseOrder.CreateElement("VendorRef");
             purchaseOrderAdd.AppendChild(vendorRef);
-            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("ListID")).InnerText = "0001";
-            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers LLC";
+            //vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("ListID")).InnerText = "0001";
+            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Csharp Spicers LLC";
 
             // <TxnDate>...</TxnDate>
             XmlElement txnDate = inputXMLDocPurchaseOrder.CreateElement("TxnDate");
             purchaseOrderAdd.AppendChild(txnDate);
-            txnDate.InnerText = "2019-1-10";
+            txnDate.InnerText = "2019-01-10";
 
             // <RefNumber>...</RefNumber>
             XmlElement refNumber = inputXMLDocPurchaseOrder.CreateElement("RefNumber");
@@ -233,17 +234,16 @@ namespace CustomerAdd
             isToBeEmailed.InnerText = "false";
 
             // <PurchaseOrderLineAdd>...</PurchaseOrderLineAdd>
-            XmlElement purchaseOrderLineAdd = inputXMLDocPurchaseOrder.CreateElement("purchaseOrderLineAdd");
+            XmlElement purchaseOrderLineAdd = inputXMLDocPurchaseOrder.CreateElement("PurchaseOrderLineAdd");
             purchaseOrderAdd.AppendChild(purchaseOrderLineAdd);
             // // construct <ItemRef><FullName>Some name</FullName></ItemRef>
             XmlElement itemRef = inputXMLDocPurchaseOrder.CreateElement("ItemRef");
-            itemRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Rope and Concrete";
+            itemRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "9p white blank envelope";
             purchaseOrderLineAdd.AppendChild(itemRef);
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Desc")).InnerText =
                 "Vinyl Irrigation LineParent Item - Do Not Purchase or Sell";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Quantity")).InnerText = "70";
-            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("UnitOfMeasure")).InnerText =
-                "foot";
+            //purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("UnitOfMeasure")).InnerText = "foot";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Rate")).InnerText = "10.00";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Amount")).InnerText = "7000.00";
     
@@ -283,9 +283,11 @@ namespace CustomerAdd
                 qbRequestProcessor = new RequestProcessor2();
                 qbRequestProcessor.OpenConnection("", "Redstone Print and Mail Data Engineering");
                 ticket = qbRequestProcessor.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
+                // // VERY IMPORTANT, invoke the function that actually constructs the qbXML
                 purchaseOrderInput = PurchaseOrderAddAddXml();
 
                 purchaseOrderResponse = qbRequestProcessor.ProcessRequest(ticket, purchaseOrderInput);
+                LogTxtData(@"C:\Temp\PurchaseOrderAddResponse_object.xml", purchaseOrderResponse);
 
                 if (ticket != null)
                 {
@@ -350,9 +352,9 @@ namespace CustomerAdd
             }
             catch (Exception ex)
             {
-                Console.WriteLine("JHA - Error while parsing purchase order response: " + ex.Message);
+                const string customMessage = "JHA - Error while parsing purchase order response: ";
                 qbRequestProcessor = null;
-                LogTxtData(@"C:\Temp\PurchaseOrderAddResponseError.xml", ex.Message);
+                LogTxtData(@"C:\Temp\PurchaseOrderAddResponseError.xml", customMessage + ex.Message);
                 return;
             }
         }
