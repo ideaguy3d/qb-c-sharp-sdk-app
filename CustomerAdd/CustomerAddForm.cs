@@ -179,7 +179,8 @@ namespace CustomerAdd
             XmlElement vendorRef = inputXMLDocPurchaseOrder.CreateElement("VendorRef");
             purchaseOrderAdd.AppendChild(vendorRef);
             //vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("ListID")).InnerText = "0001";
-            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Csharp Spicers LLC";
+            // // I think this is referring to "Vendor Name" or "Company Name" from QB
+            vendorRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "Spicers LLC";
 
             // <TxnDate>...</TxnDate>
             XmlElement txnDate = inputXMLDocPurchaseOrder.CreateElement("TxnDate");
@@ -189,29 +190,29 @@ namespace CustomerAdd
             // <RefNumber>...</RefNumber>
             XmlElement refNumber = inputXMLDocPurchaseOrder.CreateElement("RefNumber");
             purchaseOrderAdd.AppendChild(refNumber);
-            refNumber.InnerText = "777";
+            refNumber.InnerText = "1001";
 
             // <VendorAddress>...</VendorAddress>
             XmlElement vendorAddress = inputXMLDocPurchaseOrder.CreateElement("VendorAddress");
             purchaseOrderAdd.AppendChild(vendorAddress);
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText =
-                "Jeff Miller Landscaping";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jeff Miller";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "123 main st";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
+                "Spicers LLC";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jay Vincent";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "12310 E.Slauson Ave.";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Santa Fe Springs";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "CA";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "90670";
 
             // <ShipAddress>...</ShipAddress>
             XmlElement shipAddress = inputXMLDocPurchaseOrder.CreateElement("ShipAddress");
             purchaseOrderAdd.AppendChild(shipAddress);
             shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText =
-                "Jeff Miller Landscaping";
-            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jeff Miller";
-            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "123 main st";
+                "Spicers LLC";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jay Vincent";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "Santa Fe Springs";
             shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
             shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "CA";
-            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "95825";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "90670";
 
             // <DueDate>...</DueDate>
             XmlElement dueDate = inputXMLDocPurchaseOrder.CreateElement("DueDate");
@@ -241,11 +242,11 @@ namespace CustomerAdd
             itemRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "9p white blank envelope";
             purchaseOrderLineAdd.AppendChild(itemRef);
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Desc")).InnerText =
-                "Vinyl Irrigation LineParent Item - Do Not Purchase or Sell";
+                "#9 White Blank";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Quantity")).InnerText = "70";
             //purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("UnitOfMeasure")).InnerText = "foot";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Rate")).InnerText = "10.00";
-            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Amount")).InnerText = "7000.00";
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Amount")).InnerText = "5.00";
     
             string strRetString = inputXMLDocPurchaseOrder.OuterXml;
             LogTxtData(@"C:\Temp\PurchaseOrderAddRequest.xml", strRetString);
