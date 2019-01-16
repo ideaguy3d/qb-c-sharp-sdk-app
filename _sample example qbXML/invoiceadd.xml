@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?qbxml version="12.0"?>
+<QBXML>
+  <QBXMLMsgsRq onError="stopOnError">
+    <InvoiceAddRq>
+      <InvoiceAdd>
+        <CustomerRef>
+          <FullName>Jim Smith</FullName>
+        </CustomerRef>
+        <TxnDate>2015-12-15</TxnDate>
+        <IsPending>false</IsPending>
+        <IsFinanceCharge>false</IsFinanceCharge>
+        <DueDate>2015-12-15</DueDate>
+        <ShipDate>2015-12-15</ShipDate>
+        <InvoiceLineAdd>
+          <ItemRef>
+            <FullName>Cabinets</FullName>
+          </ItemRef>
+          <Desc>Spring/r/nline 2</Desc>
+          <Quantity>3846</Quantity>
+          <Amount>468.36</Amount>
+          <SalesTaxCodeRef>
+            <FullName>Non</FullName>
+          </SalesTaxCodeRef>
+        </InvoiceLineAdd>
+        <InvoiceLineAdd>
+          <Desc>Please buy me</Desc>
+        </InvoiceLineAdd>
+      </InvoiceAdd>
+    </InvoiceAddRq>
+  </QBXMLMsgsRq>
+</QBXML>

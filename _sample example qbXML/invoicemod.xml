@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?qbxml version="13.0"?>
+<QBXML>
+	<QBXMLMsgsRq onError="stopOnError">
+		<InvoiceModRq requestID="0">
+			<InvoiceMod>
+				<TxnID>A421-1639577090</TxnID>
+				<EditSequence>1639577090</EditSequence>
+				<CustomerMsgRef>
+					<FullName ></FullName>
+				</CustomerMsgRef>
+				<InvoiceLineMod> <!-- optional -->
+					<TxnLineID >A423-1639577090</TxnLineID>	<!-- required -->
+				</InvoiceLineMod> <!-- optional -->
+			</InvoiceMod>
+		</InvoiceModRq>
+	</QBXMLMsgsRq>
+</QBXML>

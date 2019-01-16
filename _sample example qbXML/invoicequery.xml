@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<?qbxml version="13.0"?>
+<QBXML>
+	<QBXMLMsgsRq onError="stopOnError">
+		<InvoiceQueryRq>
+			<IncludeLineItems >true</IncludeLineItems> <!-- optional -->
+			<IncludeLinkedTxns >true</IncludeLinkedTxns>
+			<OwnerID>0</OwnerID>
+		</InvoiceQueryRq>
+	</QBXMLMsgsRq>
+</QBXML>
