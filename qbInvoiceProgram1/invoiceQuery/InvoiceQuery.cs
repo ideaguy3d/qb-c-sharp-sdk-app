@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using Interop.QBXMLRP2; 
 
-namespace invoiceQuery
+namespace RedstoneQuickBooks
 {
     class InvoiceQuery
     {
@@ -138,8 +138,10 @@ namespace invoiceQuery
             string purchaseOrderResponse = null;
             string purchaseOrderInput = null;
 
-            // to add a purchase order
-            try 
+
+            //------------------------------------------------------------
+            // to do a "PurchaseOrderAdd" op
+            try
             {
                 //-- do the qbXMLRP request
                 qbRequestProcessor = new RequestProcessor2();
@@ -165,7 +167,9 @@ namespace invoiceQuery
                 return;
             }
 
-            // to parse the response
+
+            //------------------------------------------------------------
+            // to parse the "PurchaseOrderAdd" response
             try
             {
                 XmlDocument outputXmlPurchaseOrderAdd = new XmlDocument();
@@ -221,6 +225,9 @@ namespace invoiceQuery
                 return;
             }
 
+
+            //------------------------------------------------------------
+            // to do an "InvoiceQuery" op
             try
             {
                 //

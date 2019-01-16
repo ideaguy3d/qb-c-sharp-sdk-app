@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<?qbxml version="13.0"?>
+<QBXML>
+	<QBXMLMsgsRq onError="stopOnError">
+		<InvoiceQueryRq>
+			<IncludeLineItems >true</IncludeLineItems> <!-- optional -->
+			<IncludeLinkedTxns >true</IncludeLinkedTxns>
+			<OwnerID>0</OwnerID>
+		</InvoiceQueryRq>
+		<InvoiceModRq requestID="0">
+			<InvoiceMod>
+				<TxnID>A421-1639577090</TxnID>
+				<EditSequence>1639577090</EditSequence>
+				<CustomerMsgRef>
+					<FullName></FullName>
+				</CustomerMsgRef>
+				<InvoiceLineMod> <!-- optional -->
+					<TxnLineID >A423-1639577090</TxnLineID>	<!-- required -->
+				</InvoiceLineMod> <!-- optional -->
+			</InvoiceMod>
+		</InvoiceModRq>
+		<InvoiceAddRq>
+			<InvoiceAdd>
+				<CustomerRef>
+					<FullName>Jim Smith</FullName>
+				</CustomerRef>
+				<TxnDate>2015-12-15</TxnDate>
+				<IsPending>false</IsPending>
+				<IsFinanceCharge>false</IsFinanceCharge>
+				<DueDate>2015-12-15</DueDate>
+				<ShipDate>2015-12-15</ShipDate>
+				<InvoiceLineAdd>
+					<ItemRef>
+						<FullName>Cabinets</FullName>
+					</ItemRef>
+					<Desc>Spring/r/nline 2</Desc>
+					<Quantity>3846</Quantity>
+					<Amount>468.36</Amount>
+					<SalesTaxCodeRef>
+						<FullName>Non</FullName>
+					</SalesTaxCodeRef>
+				</InvoiceLineAdd>
+				<InvoiceLineAdd>
+					<Desc>Please buy me</Desc>
+				</InvoiceLineAdd>
+			</InvoiceAdd>
+		</InvoiceAddRq>
+		<PurchaseOrderAddRq>
+			<PurchaseOrderAdd>
+				<VendorRef>
+					<FullName>Accounting Firm</FullName>
+				</VendorRef>
+				<TxnDate>2018-12-15</TxnDate>
+				<RefNumber>159</RefNumber>
+				<VendorAddress>
+					<Addr1>Jeff Miller Masonry</Addr1>
+					<Addr2>Jeff Miller</Addr2>
+					<Addr3>1344 Hauser Blvd</Addr3>
+					<City>Los Angeles</City>
+					<State>CA</State>
+					<PostalCode>90019</PostalCode>
+				</VendorAddress>
+				<ShipAddress>
+					<Addr1>Jeff Miller Masonry</Addr1>
+					<Addr2>Jeff Miller</Addr2>
+					<Addr3>1344 Hauser Blvd</Addr3>
+					<City>Los Angeles</City>
+					<State>CA</State>
+					<PostalCode>90019</PostalCode>
+				</ShipAddress>
+				<DueDate>2018-12-15</DueDate>
+				<ExpectedDate>2018-12-15</ExpectedDate>
+				<IsToBePrinted>false</IsToBePrinted>
+				<IsToBeEmailed>false</IsToBeEmailed>
+				<PurchaseOrderLineAdd>
+					<ItemRef>
+						<FullName>Rope</FullName>
+					</ItemRef>
+					<Desc>Vinyl Irrigation LineParent Item - Do Not Purchase or Sell</Desc>
+					<Quantity>70</Quantity>
+					<UnitOfMeasure>foot</UnitOfMeasure>
+					<Rate>10.00</Rate>
+					<Amount>700.00</Amount>
+				</PurchaseOrderLineAdd>
+			</PurchaseOrderAdd>
+		</PurchaseOrderAddRq>
+	</QBXMLMsgsRq>
+</QBXML>
