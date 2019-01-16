@@ -59,7 +59,7 @@ namespace com.intuit.idn.samples
                 BuildInvoiceQueryRq(requestXmlDoc, inner);
 
                 //Connect to QuickBooks and begin a session
-                rp.OpenConnection2("", "Sample Code from OSR", localQBD);
+                rp.OpenConnection2("", "Sample Code from OSR", QBXMLRPConnectionType.localQBD);
                 connectionOpen = true;
                 string ticket = rp.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
                 sessionBegun = true;
