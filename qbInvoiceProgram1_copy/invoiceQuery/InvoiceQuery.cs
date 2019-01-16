@@ -1,8 +1,8 @@
 using System;
-using System.IO; 
+using System.IO;
 using System.Text;
 using System.Xml;
-using Interop.QBXMLRP2; 
+using Interop.QBXMLRP2;
 
 namespace invoiceQuery
 {
@@ -139,7 +139,7 @@ namespace invoiceQuery
             string purchaseOrderInput = null;
 
             // to add a purchase order
-            try 
+            try
             {
                 //-- do the qbXMLRP request
                 qbRequestProcessor = new RequestProcessor2();
