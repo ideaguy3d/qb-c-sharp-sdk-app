@@ -18,7 +18,7 @@ namespace invoiceQuery
             sw.Close();
         }
 
-        private static string PurchaseOrderAddAddXml()
+        private static string PurchaseOrderAdd_AddXml()
         {
             // create a .XML file/document
             XmlDocument inputXMLDocPurchaseOrder = new XmlDocument();
@@ -27,8 +27,7 @@ namespace invoiceQuery
             inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", "utf-8", null));
 
             // <?qbxml version="2.0"?>
-            inputXMLDocPurchaseOrder.AppendChild(
-                inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
+            inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
 
             // <QBXML>...</QBXML>
             XmlElement qbXML = inputXMLDocPurchaseOrder.CreateElement("QBXML");
@@ -139,14 +138,15 @@ namespace invoiceQuery
             string purchaseOrderResponse = null;
             string purchaseOrderInput = null;
 
-            try // to add a purchase order
+            // to add a purchase order
+            try 
             {
                 //-- do the qbXMLRP request
                 qbRequestProcessor = new RequestProcessor2();
                 qbRequestProcessor.OpenConnection("", "Redstone Print and Mail Data Engineering");
                 ticket = qbRequestProcessor.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
                 // // VERY IMPORTANT, invoke the function that actually constructs the qbXML
-                purchaseOrderInput = PurchaseOrderAddAddXml();
+                purchaseOrderInput = PurchaseOrderAdd_AddXml();
 
                 purchaseOrderResponse = qbRequestProcessor.ProcessRequest(ticket, purchaseOrderInput);
                 LogTxtData(@"C:\Temp\PurchaseOrderAddResponse_object.xml", purchaseOrderResponse);
@@ -165,7 +165,8 @@ namespace invoiceQuery
                 return;
             }
 
-            try // to parse the response
+            // to parse the response
+            try
             {
                 XmlDocument outputXmlPurchaseOrderAdd = new XmlDocument();
                 outputXmlPurchaseOrderAdd.LoadXml(purchaseOrderResponse);
@@ -218,6 +219,17 @@ namespace invoiceQuery
                 qbRequestProcessor = null;
                 LogTxtData(@"C:\Temp\PurchaseOrderAddResponseError.xml", customMessage + ex.Message);
                 return;
+            }
+
+            try
+            {
+                //
+
+            }
+            catch (Exception ex)
+            {
+                // 
+
             }
         }
 
