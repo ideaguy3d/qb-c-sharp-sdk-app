@@ -53,8 +53,13 @@ namespace RedstoneQuickBooks
             invoiceQueryRq.AppendChild(includeLinkedTxns);
             includeLinkedTxns.InnerText = "true";
 
+            // <IncludeRetElement>...</IncludeRetElement>
+            //XmlElement includeRetElement = doc.CreateElement("IncludeRetElement");
+            //invoiceQueryRq.AppendChild(includeRetElement);
+            //includeRetElement.InnerText = "true"; 
+
             // <OwnerID>...</OwnerID>
-            XmlElement ownerId = doc.CreateElement("OwnderID");
+            XmlElement ownerId = doc.CreateElement("OwnerID");
             invoiceQueryRq.AppendChild(ownerId);
             ownerId.InnerText = "0";
 
