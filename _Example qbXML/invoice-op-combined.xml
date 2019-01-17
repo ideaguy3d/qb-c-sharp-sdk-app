@@ -3,8 +3,8 @@
 <QBXML>
 	<QBXMLMsgsRq onError="stopOnError">
 		<InvoiceQueryRq>
-			<IncludeLineItems >true</IncludeLineItems> <!-- optional -->
-			<IncludeLinkedTxns >true</IncludeLinkedTxns>
+			<IncludeLineItems>true</IncludeLineItems> <!-- optional -->
+			<IncludeLinkedTxns>true</IncludeLinkedTxns>
 			<OwnerID>0</OwnerID>
 		</InvoiceQueryRq>
 		<InvoiceModRq requestID="0">
