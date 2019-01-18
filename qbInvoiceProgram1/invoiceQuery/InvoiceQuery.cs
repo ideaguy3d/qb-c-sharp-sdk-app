@@ -64,7 +64,7 @@ namespace RedstoneQuickBooks
             ownerId.InnerText = "0";
 
             string docOuter = doc.OuterXml; 
-            LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQuery.xml", docOuter);
+            LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryRequest.xml", docOuter);
             return docOuter; 
         } 
 
@@ -265,7 +265,7 @@ namespace RedstoneQuickBooks
                 // send request and get response
                 responseStr = rp.ProcessRequest(ticket, reqXmlDocOuter);
 
-                LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryRaw.xml", responseStr); 
+                LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryResponse.xml", responseStr); 
 
                 // end the session and close the connection to quickbooks
                 rp.EndSession(ticket);
