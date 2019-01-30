@@ -2,7 +2,8 @@ using System;
 using System.IO; 
 using System.Text;
 using System.Xml;
-using Interop.QBXMLRP2; 
+using Interop.QBXMLRP2;
+using System.Net; 
 
 namespace RedstoneQuickBooks
 {
@@ -65,6 +66,7 @@ namespace RedstoneQuickBooks
 
             string docOuter = doc.OuterXml; 
             LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryRequest.xml", docOuter);
+
             return docOuter; 
         } 
 
@@ -121,8 +123,7 @@ namespace RedstoneQuickBooks
             // <VendorAddress>...</VendorAddress>
             XmlElement vendorAddress = inputXMLDocPurchaseOrder.CreateElement("VendorAddress");
             purchaseOrderAdd.AppendChild(vendorAddress);
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText =
-                "Spicers LLC";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText = "Spicers LLC";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jay Vincent";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "12310 E.Slauson Ave.";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Santa Fe Springs";
@@ -132,8 +133,7 @@ namespace RedstoneQuickBooks
             // <ShipAddress>...</ShipAddress>
             XmlElement shipAddress = inputXMLDocPurchaseOrder.CreateElement("ShipAddress");
             purchaseOrderAdd.AppendChild(shipAddress);
-            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText =
-                "Spicers LLC";
+            shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText = "Spicers LLC";
             shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jay Vincent";
             shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "Santa Fe Springs";
             shipAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Sacramento";
@@ -167,8 +167,7 @@ namespace RedstoneQuickBooks
             XmlElement itemRef = inputXMLDocPurchaseOrder.CreateElement("ItemRef");
             itemRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "9p white blank envelope";
             purchaseOrderLineAdd.AppendChild(itemRef);
-            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Desc")).InnerText =
-                "#9 White Blank";
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Desc")).InnerText = "#9 White Blank";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Quantity")).InnerText = "70";
             //purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("UnitOfMeasure")).InnerText = "foot";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Rate")).InnerText = "10.00";
