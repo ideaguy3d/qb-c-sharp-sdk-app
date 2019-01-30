@@ -33,11 +33,6 @@ namespace RedstoneQuickBooks
             sw.Close(); 
         }
 
-        private static void WalkInvoiceQueryRs(string response)
-        {
-            XmlDocument responseXmlDoc = new XmlDocument(); 
-        }
-
         private static string BuildInvoiceQueryRq(XmlDocument doc, XmlElement qbxmlMsgsRq)
         {
             // <InvoiceQueryRq>...</InvoiceQueryRq>

@@ -1,19 +1,39 @@
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Xml;
+using System.Web;
+using Interop.QBXMLRP2; 
 
-namespace PurchaseOrderAdd
+namespace RedstoneDataEngineering
 {
-    class Program
+    class RedstonePurchaseOrderAdd
     {
+        private static string appName = "QB Redstone App1";
+
+        private static void LogQuickBooksData(string filePath, string dataStr)
+        {
+            StreamWriter sw = new StreamWriter(filePath);
+            sw.WriteLine(dataStr);
+            sw.Flush();
+            sw.Close(); 
+        }
+        
+        private static void BuildPurchaseOrderAddRq(XmlDocument xmlDoc, XmlElement xmlElement)
+        {
+
+        }
+
+        private static void InvokePHP()
+        {
+
+        }
+
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World!");
-            Console.ReadKey();
+            
 
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
+
         }
     }
 }
