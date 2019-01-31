@@ -7,7 +7,7 @@ using Interop.QBXMLRP2;
 
 namespace RedstoneDataEngineering
 {
-    class RedstonePurchaseOrderAdd
+    class RedstonePurchaseOrder
     {
         private static string appName = "QB Redstone App1";
 
@@ -21,7 +21,7 @@ namespace RedstoneDataEngineering
         
         private static void BuildPurchaseOrderAddRq(XmlDocument xmlDoc, XmlElement xmlElement)
         {
-
+            
         }
 
         private static void InvokePHP()

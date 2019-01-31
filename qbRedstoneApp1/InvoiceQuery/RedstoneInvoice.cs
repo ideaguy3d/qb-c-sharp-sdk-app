@@ -7,7 +7,7 @@ using Interop.QBXMLRP2;
 
 namespace RedstoneDataEngineering
 {
-    class RedstoneInvoiceQuery
+    class RedstoneInvoice
     {
         private static string appName = "QB Redstone App1"; 
 
@@ -32,7 +32,10 @@ namespace RedstoneDataEngineering
         static void Main(string[] args)
         {
 
-
+            bool sessionBegun = false;
+            bool connectionOpen = false;
+            RequestProcessor2 requestProcessor = null;
+            XmlDocument xmlReqDoc = null; 
             
         }
     }

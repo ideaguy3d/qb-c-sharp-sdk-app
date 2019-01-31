@@ -1,9 +1,9 @@
 using System;
-using System.IO; 
+using System.IO;
 using System.Text;
 using System.Xml;
 using Interop.QBXMLRP2;
-using System.Net; 
+using System.Net;
 
 namespace RedstoneQuickBooks
 {
@@ -12,6 +12,7 @@ namespace RedstoneQuickBooks
         private static string appName = "Redstone Print and Mail Data Engineering";
 
         private static string logLocation = @"C:\Temp\PurchaseOrderAddRequest.xml";
+
         // C:\xampp\htdocs\qb
         private static string logBase = @"C:\xampp\htdocs\qb\";
         private static string logInvoiceQueryDataLocation = @"C:\xampp\htdocs\qb\invoice-query\InvoiceQueryData.xml";
@@ -30,7 +31,7 @@ namespace RedstoneQuickBooks
             StreamWriter sw = new StreamWriter(filePath);
             sw.WriteLine(dataStr);
             sw.Flush();
-            sw.Close(); 
+            sw.Close();
         }
 
         private static string BuildInvoiceQueryRq(XmlDocument doc, XmlElement qbxmlMsgsRq)
@@ -59,11 +60,14 @@ namespace RedstoneQuickBooks
             invoiceQueryRq.AppendChild(ownerId);
             ownerId.InnerText = "0";
 
-            string docOuter = doc.OuterXml; 
-            LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryRequest.xml", docOuter);
+            string docOuter = doc.OuterXml;
+            LogQuickBooksData(
+                MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryRequest.xml",
+                docOuter
+            );
 
-            return docOuter; 
-        } 
+            return docOuter;
+        }
 
         private static string PurchaseOrderAdd_AddXml()
         {
@@ -74,7 +78,8 @@ namespace RedstoneQuickBooks
             inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateXmlDeclaration("1.0", "utf-8", null));
 
             // <?qbxml version="2.0"?>
-            inputXMLDocPurchaseOrder.AppendChild(inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
+            inputXMLDocPurchaseOrder.AppendChild(
+                inputXMLDocPurchaseOrder.CreateProcessingInstruction("qbxml", "version=\"13.0\""));
 
             // <QBXML>...</QBXML>
             XmlElement qbXML = inputXMLDocPurchaseOrder.CreateElement("QBXML");
@@ -120,7 +125,8 @@ namespace RedstoneQuickBooks
             purchaseOrderAdd.AppendChild(vendorAddress);
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr1")).InnerText = "Spicers LLC";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr2")).InnerText = "Jay Vincent";
-            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText = "12310 E.Slauson Ave.";
+            vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Addr3")).InnerText =
+                "12310 E.Slauson Ave.";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("City")).InnerText = "Santa Fe Springs";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("State")).InnerText = "CA";
             vendorAddress.AppendChild(inputXMLDocPurchaseOrder.CreateElement("PostalCode")).InnerText = "90670";
@@ -160,9 +166,11 @@ namespace RedstoneQuickBooks
             purchaseOrderAdd.AppendChild(purchaseOrderLineAdd);
             // // construct <ItemRef><FullName>Some name</FullName></ItemRef>
             XmlElement itemRef = inputXMLDocPurchaseOrder.CreateElement("ItemRef");
-            itemRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText = "9p white blank envelope";
+            itemRef.AppendChild(inputXMLDocPurchaseOrder.CreateElement("FullName")).InnerText =
+                "9p white blank envelope";
             purchaseOrderLineAdd.AppendChild(itemRef);
-            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Desc")).InnerText = "#9 White Blank";
+            purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Desc")).InnerText =
+                "#9 White Blank";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Quantity")).InnerText = "70";
             //purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("UnitOfMeasure")).InnerText = "foot";
             purchaseOrderLineAdd.AppendChild(inputXMLDocPurchaseOrder.CreateElement("Rate")).InnerText = "10.00";
@@ -180,7 +188,7 @@ namespace RedstoneQuickBooks
 
             // qb ops controls
             bool doPurchaseOrderAdd = false;
-            bool doInvoiceQuery = true; 
+            bool doInvoiceQuery = true;
 
             // qbxmlrp2 vars
             RequestProcessor2 qbRequestProcessor;
@@ -196,13 +204,11 @@ namespace RedstoneQuickBooks
             XmlElement qbxml = null; // aka "outer"
             XmlElement qbxmlMsgsRq = null; // aka "inner" 
             string responseStr = null;
-            string reqXmlDocOuter = null; 
+            string reqXmlDocOuter = null;
 
-            //------------------------------------------------------------
-            // to set function wide starting vars
-            try
+            try // to initialize main function base XML Document
             {
-                rp = new RequestProcessor2(); 
+                rp = new RequestProcessor2();
 
                 // XML document
                 reqXmlDoc = new XmlDocument();
@@ -229,29 +235,21 @@ namespace RedstoneQuickBooks
                 return;
             }
 
-            Console.WriteLine("__>> Line 232 ish");
-
-            //------------------------------------------------------------
-            // to build the request message sets
-            try
+            try // to build the request message sets
             {
-                reqXmlDocOuter = BuildInvoiceQueryRq(reqXmlDoc, qbxmlMsgsRq); 
+                reqXmlDocOuter = BuildInvoiceQueryRq(reqXmlDoc, qbxmlMsgsRq);
             }
             catch (Exception ex)
             {
                 rp = null;
                 LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RequestMessagesError.xml", ex.Message);
-                return; 
+                return;
             }
 
-            Console.WriteLine("__>> Line 247 ish");
-
-            //------------------------------------------------------------
-            // to send the MessageSetRequest
-            try
+            try // to send the MessageSetRequest
             {
-                // , QBXMLRPConnectionType.localQBD
-                rp.OpenConnection("", MessageSetRq.appName);
+                // QBXMLRPConnectionType.localQBD
+                rp.OpenConnection("", appName);
                 connectionOpen = true;
                 ticket = rp.BeginSession("", QBFileMode.qbFileOpenDoNotCare);
                 sessionBegun = true;
@@ -259,32 +257,35 @@ namespace RedstoneQuickBooks
                 // send request and get response
                 responseStr = rp.ProcessRequest(ticket, reqXmlDocOuter);
 
-                LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryResponse.xml", responseStr); 
+                LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryResponse.xml",
+                    responseStr);
 
                 // end the session and close the connection to quickbooks
                 rp.EndSession(ticket);
                 sessionBegun = false;
                 rp.CloseConnection();
-                connectionOpen = false; 
+                connectionOpen = false;
 
                 //TODO: Walk qbXML response
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 rp = null;
-                LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\SendReqError.xml", ex.Message);
-                
+                LogQuickBooksData(
+                    logBase + "invoice-query\\SendReqError.xml", ex.Message
+                );
+
                 if (sessionBegun)
                 {
                     rp.EndSession(ticket);
                 }
 
-                if(connectionOpen)
+                if (connectionOpen)
                 {
                     rp.CloseConnection();
                 }
-                
-                return; 
+
+                return;
             }
 
             Console.WriteLine("__>> Line 290 ish");
@@ -326,7 +327,8 @@ namespace RedstoneQuickBooks
                 {
                     XmlDocument outputXmlPurchaseOrderAdd = new XmlDocument();
                     outputXmlPurchaseOrderAdd.LoadXml(purchaseOrderResponse);
-                    XmlNodeList qbXmlMsgsRsNodeList = outputXmlPurchaseOrderAdd.GetElementsByTagName("PurchaseOrderAddRs");
+                    XmlNodeList qbXmlMsgsRsNodeList =
+                        outputXmlPurchaseOrderAdd.GetElementsByTagName("PurchaseOrderAddRs");
 
                     if (qbXmlMsgsRsNodeList.Count == 1)
                     {
@@ -377,8 +379,6 @@ namespace RedstoneQuickBooks
                     return;
                 }
             }
-
         }
-
     }
 }
