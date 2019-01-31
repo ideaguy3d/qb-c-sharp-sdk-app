@@ -257,8 +257,10 @@ namespace RedstoneQuickBooks
                 // send request and get response
                 responseStr = rp.ProcessRequest(ticket, reqXmlDocOuter);
 
-                LogQuickBooksData(MessageSetRq.logBase + "invoice-query\\RedstoneInvoiceQueryResponse.xml",
-                    responseStr);
+                LogQuickBooksData(
+                    logBase + "invoice-query\\RedstoneInvoiceQueryResponse.xml",
+                    responseStr
+                );
 
                 // end the session and close the connection to quickbooks
                 rp.EndSession(ticket);
